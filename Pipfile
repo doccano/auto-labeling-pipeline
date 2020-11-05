@@ -12,6 +12,8 @@ isort = "*"
 
 [packages]
 requests = "*"
+boto3 = "*"
+pydantic = "*"
 
 [requires]
 python_version = "3.8"
