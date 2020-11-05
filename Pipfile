@@ -20,5 +20,5 @@ python_version = "3.8"
 
 [scripts]
 isort = "isort . -c"
-test = "pytest --cov=auto-labeling-pipeline --cov-report=term-missing -vv"
-flake8 = "flake8 auto-labeling-pipeline --ignore=F401,E741"
+test = "pytest --cov=auto_labeling_pipeline --cov-report=term-missing -vv"
+flake8 = "flake8 auto_labeling_pipeline --ignore=F401,E741"
