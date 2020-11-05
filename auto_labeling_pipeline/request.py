@@ -12,6 +12,27 @@ class Request(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
 
+class CustomRequest(Request):
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.url = kwargs['url']
+        self.params = kwargs['params']
+        self.method = kwargs['method']
+        self.body = kwargs['body']
+        self.headers = kwargs['headers']
+
+    def send(self, text):
+        response = requests.request(
+            url=self.url,
+            method=self.method,
+            params=self.params,
+            headers=self.headers,
+            data=self.body
+        ).json()
+        return response
+
+
 class GCPEntitiesRequest(Request):
 
     def __init__(self, **kwargs):

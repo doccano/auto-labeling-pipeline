@@ -1,14 +1,25 @@
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, SecretStr
 
-from .request import GCPEntitiesRequest
+from .request import CustomRequest, GCPEntitiesRequest
 
 
 class RequestModel(BaseModel):
 
     def build(self):
         raise NotImplementedError
+
+
+class CustomRequestModel(RequestModel):
+    url: str
+    method: Literal['GET', 'POST']
+    params: Optional[dict]
+    headers: Optional[dict]
+    body: Optional[dict]
+
+    def build(self):
+        return CustomRequest(**self.dict())
 
 
 class GCPEntitiesRequestModel(RequestModel):
