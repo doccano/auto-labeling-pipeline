@@ -12,7 +12,7 @@ class Request(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
 
-class CustomRequest(Request):
+class CustomRESTRequest(Request):
 
     def __init__(self, **kwargs):
         super().__init__()

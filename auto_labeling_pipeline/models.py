@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, SecretStr
 
-from .request import CustomRequest, GCPEntitiesRequest
+from .request import CustomRESTRequest, GCPEntitiesRequest
 
 
 class RequestModel(BaseModel):
@@ -11,7 +11,7 @@ class RequestModel(BaseModel):
         raise NotImplementedError
 
 
-class CustomRequestModel(RequestModel):
+class CustomRESTRequestModel(RequestModel):
     url: str
     method: Literal['GET', 'POST']
     params: Optional[dict]
@@ -19,7 +19,7 @@ class CustomRequestModel(RequestModel):
     body: Optional[dict]
 
     def build(self):
-        return CustomRequest(**self.dict())
+        return CustomRESTRequest(**self.dict())
 
 
 class GCPEntitiesRequestModel(RequestModel):
