@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, SecretStr
 
-from .request import RESTRequest
+from .request import AmazonComprehendSentimentRequest, RESTRequest
 
 
 class RequestModel(BaseModel):
@@ -40,3 +40,18 @@ class GCPEntitiesRequestModel(RequestModel):
             }
         }
         return RESTRequest(url=url, method=method, headers=headers, params=params, body=body)
+
+
+class AmazonComprehendSentimentRequestModel(RequestModel):
+    aws_access_key: str
+    aws_secret_access_key: SecretStr
+    region_name: str
+    language_code: str
+
+    def build(self):
+        return AmazonComprehendSentimentRequest(
+            aws_access_key=self.aws_access_key,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=self.region_name,
+            language_code=self.language_code
+        )

@@ -1,6 +1,7 @@
 import abc
 import json
 
+import boto3
 import requests
 from jinja2 import Template
 
@@ -39,4 +40,27 @@ class RESTRequest(Request):
             headers=self.headers,
             data=body
         ).json()
+        return response
+
+
+class AmazonComprehendRequest(Request):
+
+    def __init__(self, **kwargs):
+        super(AmazonComprehendRequest, self).__init__()
+        self.comprehend = boto3.client(
+            'comprehend',
+            aws_access_key_id=kwargs['aws_access_key'],
+            aws_secret_access_key=kwargs['aws_secret_access_key'],
+            region_name=kwargs['region_name']
+        )
+        self.language_code = kwargs['language_code']
+
+    def send(self, text):
+        pass
+
+
+class AmazonComprehendSentimentRequest(AmazonComprehendRequest):
+
+    def send(self, text):
+        response = self.comprehend.detect_sentiment(Text=text, LanguageCode=self.language_code)
         return response
