@@ -14,6 +14,7 @@ isort = "*"
 requests = "*"
 boto3 = "*"
 pydantic = "*"
+jinja2 = "*"
 
 [requires]
 python_version = "3.8"

@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, SecretStr
 
-from .request import CustomRESTRequest, GCPEntitiesRequest
+from .request import RESTRequest
 
 
 class RequestModel(BaseModel):
@@ -19,7 +19,7 @@ class CustomRESTRequestModel(RequestModel):
     body: Optional[dict]
 
     def build(self):
-        return CustomRESTRequest(**self.dict())
+        return RESTRequest(**self.dict())
 
 
 class GCPEntitiesRequestModel(RequestModel):
@@ -28,4 +28,15 @@ class GCPEntitiesRequestModel(RequestModel):
     language: str = 'en'
 
     def build(self):
-        return GCPEntitiesRequest(key=self.key.get_secret_value(), type=self.type, language=self.language)
+        url = 'https://language.googleapis.com/v1/documents:analyzeEntities'
+        method = 'POST'
+        headers = {'Content-Type': 'application/json'}
+        params = {'key': self.key.get_secret_value()}
+        body = {
+            'document': {
+                'type': self.type,
+                'language': self.language,
+                'content': '{{ text }}'
+            }
+        }
+        return RESTRequest(url=url, method=method, headers=headers, params=params, body=body)
