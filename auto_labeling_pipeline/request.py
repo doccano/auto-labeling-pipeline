@@ -14,7 +14,7 @@ def render(template_str: str, text: str):
 class Request(metaclass=abc.ABCMeta):
 
     def __init__(self, **kwargs):
-        pass
+        raise NotImplementedError
 
     def send(self, text):
         raise NotImplementedError
