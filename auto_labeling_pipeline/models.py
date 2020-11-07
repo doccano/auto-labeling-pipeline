@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, SecretStr
 
-from .request import AmazonComprehendSentimentRequest, RESTRequest
+from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, RESTRequest
 
 
 class RequestModel(BaseModel):

@@ -1,3 +1,5 @@
+import json
+
 from jinja2 import Template
 
 
@@ -7,5 +9,6 @@ class MappingTemplate:
         self.template = Template(template)
 
     def render(self, response: dict):
-        rendered = self.template.render(input=response)
-        return rendered
+        rendered_str = self.template.render(input=response)
+        rendered_dic = json.loads(rendered_str)
+        return rendered_dic
