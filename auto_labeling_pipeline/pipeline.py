@@ -1,5 +1,5 @@
-from auto_labeling_pipeline.models import RequestModel
 from auto_labeling_pipeline.mappings import MappingTemplate
+from auto_labeling_pipeline.models import RequestModel
 from auto_labeling_pipeline.postprocessing import PostProcessor
 
 
