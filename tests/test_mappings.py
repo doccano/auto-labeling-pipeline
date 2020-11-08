@@ -1,4 +1,4 @@
-from auto_labeling_pipeline.mappings import MappingTemplate
+from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate
 
 
 def test_amazon_comprehend_sentiment():
@@ -11,8 +11,7 @@ def test_amazon_comprehend_sentiment():
             'Mixed': 0
         }
     }
-    template = '[{"label": "{{ input.Sentiment }}"}]'
-    mapping_template = MappingTemplate(template)
+    mapping_template = AmazonComprehendSentimentTemplate()
     annotations = mapping_template.render(response)
     expected = [{'label': 'POSITIVE'}]
     assert annotations == expected
