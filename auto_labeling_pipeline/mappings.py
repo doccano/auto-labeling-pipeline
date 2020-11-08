@@ -19,3 +19,27 @@ class AmazonComprehendSentimentTemplate(MappingTemplate):
     def __init__(self, template=None):
         template = '[{"label": "{{ input.Sentiment }}"}]'
         super(AmazonComprehendSentimentTemplate, self).__init__(template)
+
+
+class GCPEntitiesTemplate(MappingTemplate):
+
+    def __init__(self, template=None):
+        template = '''
+        [
+        {% for entity in input.entities %}
+        {% for mention in entity.mentions %}
+        {% if mention.text.content == entity.name %}
+        {%- set begin_offset = mention.text.beginOffset -%}
+        {%- set end_offset = begin_offset + mention.text.content|length -%}
+        {
+        "label": "{{ entity.type }}",
+        "begin_offset": {{ begin_offset }},
+        "end_offset": {{ end_offset }}
+        }
+        {% endif %}
+        {% endfor %}
+        {% if not loop.last %},{% endif %}
+        {% endfor %}
+        ]
+        '''
+        super(GCPEntitiesTemplate, self).__init__(template)
