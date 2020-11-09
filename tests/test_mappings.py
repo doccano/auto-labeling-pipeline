@@ -178,46 +178,45 @@ def test_gcp_entities():
     }
     mapping_template = GCPEntitiesTemplate()
     annotations = mapping_template.render(response)
-    expected = [{'label': 'POSITIVE'}]
     expected = [
         {
             'label': 'PERSON',
-            'begin_offset': 10,
+            'start_offset': 10,
             'end_offset': 15
         },
         {
             'label': 'LOCATION',
-            'begin_offset': 36,
+            'start_offset': 36,
             'end_offset': 47
         },
         {
             'label': 'LOCATION',
-            'begin_offset': 65,
+            'start_offset': 65,
             'end_offset': 84
         },
         {
             'label': 'LOCATION',
-            'begin_offset': 86,
+            'start_offset': 86,
             'end_offset': 100
         },
         {
             'label': 'ADDRESS',
-            'begin_offset': 60,
+            'start_offset': 60,
             'end_offset': 100
         },
         {
             'label': 'NUMBER',
-            'begin_offset': 60,
+            'start_offset': 60,
             'end_offset': 64
         },
         {
             'label': 'DATE',
-            'begin_offset': 105,
+            'start_offset': 105,
             'end_offset': 114
         },
         {
             'label': 'NUMBER',
-            'begin_offset': 113,
+            'start_offset': 113,
             'end_offset': 114
         },
     ]

@@ -29,11 +29,11 @@ class GCPEntitiesTemplate(MappingTemplate):
         {% for entity in input.entities %}
         {% for mention in entity.mentions %}
         {% if mention.text.content == entity.name %}
-        {%- set begin_offset = mention.text.beginOffset -%}
-        {%- set end_offset = begin_offset + mention.text.content|length -%}
+        {%- set start_offset = mention.text.beginOffset -%}
+        {%- set end_offset = start_offset + mention.text.content|length -%}
         {
         "label": "{{ entity.type }}",
-        "begin_offset": {{ begin_offset }},
+        "start_offset": {{ start_offset }},
         "end_offset": {{ end_offset }}
         }
         {% endif %}
