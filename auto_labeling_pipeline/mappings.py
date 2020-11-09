@@ -18,8 +18,8 @@ class MappingTemplate:
         self.template = Template(template)
 
     def render(self, response: dict):
-        rendered_str = self.template.render(input=response)
-        labels = json.loads(rendered_str)
+        rendered_json = self.template.render(input=response)
+        labels = json.loads(rendered_json)
         labels = [self.label_class(**label) for label in labels]
         return labels
 
