@@ -4,6 +4,7 @@ import pathlib
 from jinja2 import Template
 
 from auto_labeling_pipeline.label import ClassificationLabel, SequenceLabel
+
 TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
 
 
