@@ -1,14 +1,19 @@
 import json
+import pathlib
 
 from jinja2 import Template
 
 from auto_labeling_pipeline.label import ClassificationLabel, SequenceLabel
+TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
 
 
 class MappingTemplate:
     label_class = None
+    template_file = None
 
     def __init__(self, template=None):
+        if self.template_file:
+            template = self.load()
         self.template = Template(template)
 
     def render(self, response: dict):
@@ -17,35 +22,17 @@ class MappingTemplate:
         labels = [self.label_class(**label) for label in labels]
         return labels
 
+    def load(self):
+        filepath = TEMPLATE_DIR / self.template_file
+        with open(filepath) as f:
+            return f.read()
+
 
 class AmazonComprehendSentimentTemplate(MappingTemplate):
     label_class = ClassificationLabel
-
-    def __init__(self, template=None):
-        template = '[{"label": "{{ input.Sentiment }}"}]'
-        super(AmazonComprehendSentimentTemplate, self).__init__(template)
+    template_file = 'amazon_comprehend_sentiment.jinja2'
 
 
 class GCPEntitiesTemplate(MappingTemplate):
     label_class = SequenceLabel
-
-    def __init__(self, template=None):
-        template = '''
-        [
-        {% for entity in input.entities %}
-        {% for mention in entity.mentions %}
-        {% if mention.text.content == entity.name %}
-        {%- set start_offset = mention.text.beginOffset -%}
-        {%- set end_offset = start_offset + mention.text.content|length -%}
-        {
-        "label": "{{ entity.type }}",
-        "start_offset": {{ start_offset }},
-        "end_offset": {{ end_offset }}
-        }
-        {% endif %}
-        {% endfor %}
-        {% if not loop.last %},{% endif %}
-        {% endfor %}
-        ]
-        '''
-        super(GCPEntitiesTemplate, self).__init__(template)
+    template_file = 'gcp_entities.jinja2'

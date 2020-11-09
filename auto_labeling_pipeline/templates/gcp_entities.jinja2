@@ -1,0 +1,16 @@
+[
+  {% for entity in input.entities %}
+    {% for mention in entity.mentions %}
+      {% if mention.text.content == entity.name %}
+        {%- set start_offset = mention.text.beginOffset -%}
+        {%- set end_offset = start_offset + mention.text.content|length -%}
+        {
+          "label": "{{ entity.type }}",
+          "start_offset": {{ start_offset }},
+          "end_offset": {{ end_offset }}
+        }
+      {% endif %}
+    {% endfor %}
+    {% if not loop.last %},{% endif %}
+  {% endfor %}
+]
