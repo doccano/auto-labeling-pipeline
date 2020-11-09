@@ -2,19 +2,24 @@ import json
 
 from jinja2 import Template
 
+from auto_labeling_pipeline.label import ClassificationLabel, SequenceLabel
+
 
 class MappingTemplate:
+    label_class = None
 
     def __init__(self, template=None):
         self.template = Template(template)
 
     def render(self, response: dict):
         rendered_str = self.template.render(input=response)
-        rendered_dic = json.loads(rendered_str)
-        return rendered_dic
+        labels = json.loads(rendered_str)
+        labels = [self.label_class(**label) for label in labels]
+        return labels
 
 
 class AmazonComprehendSentimentTemplate(MappingTemplate):
+    label_class = ClassificationLabel
 
     def __init__(self, template=None):
         template = '[{"label": "{{ input.Sentiment }}"}]'
@@ -22,6 +27,7 @@ class AmazonComprehendSentimentTemplate(MappingTemplate):
 
 
 class GCPEntitiesTemplate(MappingTemplate):
+    label_class = SequenceLabel
 
     def __init__(self, template=None):
         template = '''
