@@ -1,18 +1,20 @@
 import json
 import pathlib
+from typing import Optional, Type, Union
 
 from jinja2 import Template
 
-from auto_labeling_pipeline.label import ClassificationLabel, SequenceLabel
+from auto_labeling_pipeline.label import ClassificationLabel, Seq2seqLabel, SequenceLabel
 
 TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
+LABEL_CLASS = Type[Union[ClassificationLabel, Seq2seqLabel, SequenceLabel]]
 
 
 class MappingTemplate:
-    label_class = None
-    template_file = None
+    label_class: LABEL_CLASS = ClassificationLabel
+    template_file: str = ''
 
-    def __init__(self, template=None):
+    def __init__(self, template: Optional[str] = None):
         if self.template_file:
             template = self.load()
         self.template = Template(template)
@@ -23,7 +25,7 @@ class MappingTemplate:
         labels = [self.label_class(**label) for label in labels]
         return labels
 
-    def load(self):
+    def load(self) -> str:
         filepath = TEMPLATE_DIR / self.template_file
         with open(filepath) as f:
             return f.read()
