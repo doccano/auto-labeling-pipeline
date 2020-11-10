@@ -12,4 +12,4 @@ class SequenceLabel(BaseModel):
 
 
 class Seq2seqLabel(BaseModel):
-    label: str
+    text: str
