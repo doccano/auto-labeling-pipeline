@@ -23,7 +23,7 @@ class CustomRESTRequestModel(RequestModel):
 
 
 class GCPEntitiesRequestModel(RequestModel):
-    key: SecretStr = None
+    key: SecretStr
     type: Literal['TYPE_UNSPECIFIED', 'PLAIN_TEXT', 'HTML'] = 'TYPE_UNSPECIFIED'
     language: str = 'en'
 
