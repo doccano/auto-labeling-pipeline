@@ -1,4 +1,5 @@
-from auto_labeling_pipeline.postprocessing import PostProcessor
+from auto_labeling_pipeline.label import ClassificationLabel
+from auto_labeling_pipeline.postprocessing import ClassificationPostProcessor
 
 
 def test_postprocessor():
@@ -7,9 +8,10 @@ def test_postprocessor():
         {'label': 'ORG'},
         {'label': 'Facility'}
     ]
+    annotations = [ClassificationLabel(**label) for label in annotations]
     stop_labels = {'PERSON'}
     mapping = {'Facility': 'ORG'}
-    processor = PostProcessor(stop_labels=stop_labels, mapping=mapping)
+    processor = ClassificationPostProcessor(stop_labels=stop_labels, mapping=mapping)
     processed = processor.transform(annotations)
     expected = [
         {'label': 'ORG'},
