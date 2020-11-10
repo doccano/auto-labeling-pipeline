@@ -6,7 +6,7 @@ import requests
 from jinja2 import Template
 
 
-def render(template_str: str, text: str):
+def render(template_str: str, text: str) -> str:
     template = Template(template_str)
     return template.render(text=text)
 
@@ -16,7 +16,7 @@ class Request(metaclass=abc.ABCMeta):
     def __init__(self, **kwargs):
         raise NotImplementedError
 
-    def send(self, text):
+    def send(self, text: str):
         raise NotImplementedError
 
 
@@ -30,7 +30,7 @@ class RESTRequest(Request):
         self.body = kwargs['body']
         self.headers = kwargs['headers']
 
-    def send(self, text):
+    def send(self, text: str):
         body = render(json.dumps(self.body), text)
         params = render(json.dumps(self.params), text)
         response = requests.request(
@@ -46,7 +46,7 @@ class RESTRequest(Request):
 class AmazonComprehendRequest(Request):
 
     def __init__(self, **kwargs):
-        super(AmazonComprehendRequest, self).__init__()
+        super().__init__()
         self.comprehend = boto3.client(
             'comprehend',
             aws_access_key_id=kwargs['aws_access_key'],
@@ -55,12 +55,12 @@ class AmazonComprehendRequest(Request):
         )
         self.language_code = kwargs['language_code']
 
-    def send(self, text):
+    def send(self, text: str):
         pass
 
 
 class AmazonComprehendSentimentRequest(AmazonComprehendRequest):
 
-    def send(self, text):
+    def send(self, text: str):
         response = self.comprehend.detect_sentiment(Text=text, LanguageCode=self.language_code)
         return response
