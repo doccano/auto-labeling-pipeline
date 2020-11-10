@@ -27,3 +27,6 @@ jobs:
     - name: Test with pytest
       run: |
         pipenv run test
+    - name: Check static typing
+      run: |
+        mypy auto_labeling_pipeline/
