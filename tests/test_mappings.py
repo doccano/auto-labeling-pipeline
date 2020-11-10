@@ -12,6 +12,7 @@ def test_amazon_comprehend_sentiment(data_path):
     response = load_json(data_path / 'amazon_comprehend_sentiment.json')
     mapping_template = AmazonComprehendSentimentTemplate()
     annotations = mapping_template.render(response)
+    annotations = annotations.dict()
     expected = [{'label': 'NEUTRAL'}]
     assert annotations == expected
 
@@ -20,6 +21,7 @@ def test_gcp_entities(data_path):
     response = load_json(data_path / 'gcp_entities.json')
     mapping_template = GCPEntitiesTemplate()
     annotations = mapping_template.render(response)
+    annotations = annotations.dict()
     expected = [
         {
             'label': 'PERSON',
