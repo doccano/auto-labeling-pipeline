@@ -4,20 +4,19 @@ from auto_labeling_pipeline.postprocessing import PostProcessor
 
 
 def test_postprocessor():
-    annotations = [
+    labels = [
         {'label': 'PERSON'},
         {'label': 'ORG'},
         {'label': 'Facility'}
     ]
-    annotations = [ClassificationLabel(**label) for label in annotations]
-    annotations = ClassificationLabels(annotations)
+    labels = [ClassificationLabel(**label) for label in labels]
+    labels = ClassificationLabels(labels)
     stop_labels = {'PERSON'}
     mapping = {'Facility': 'ORG'}
     processor = PostProcessor(stop_labels=stop_labels, mapping=mapping)
-    processed = processor.transform(annotations)
+    labels = processor.transform(labels).dict()
     expected = [
         {'label': 'ORG'},
         {'label': 'ORG'}
     ]
-    labels = processed.dict()
     assert labels == expected

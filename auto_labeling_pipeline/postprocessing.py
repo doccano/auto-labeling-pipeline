@@ -10,7 +10,7 @@ class PostProcessor(metaclass=abc.ABCMeta):
         self.stop_labels = stop_labels
         self.mapping = mapping
 
-    def transform(self, annotations: Labels) -> Labels:
-        annotations = annotations.filter_by_name(self.stop_labels)
-        annotations = annotations.convert_label(self.mapping)
-        return annotations
+    def transform(self, labels: Labels) -> Labels:
+        labels = labels.filter_by_name(self.stop_labels)
+        labels = labels.convert_label(self.mapping)
+        return labels
