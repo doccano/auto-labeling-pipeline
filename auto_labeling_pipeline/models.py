@@ -2,12 +2,12 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, SecretStr
 
-from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, RESTRequest
+from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, Request, RESTRequest
 
 
 class RequestModel(BaseModel):
 
-    def build(self):
+    def build(self) -> Request:
         raise NotImplementedError
 
 
@@ -18,7 +18,7 @@ class CustomRESTRequestModel(RequestModel):
     headers: Optional[dict]
     body: Optional[dict]
 
-    def build(self):
+    def build(self) -> Request:
         return RESTRequest(**self.dict())
 
 
@@ -27,7 +27,7 @@ class GCPEntitiesRequestModel(RequestModel):
     type: Literal['TYPE_UNSPECIFIED', 'PLAIN_TEXT', 'HTML'] = 'TYPE_UNSPECIFIED'
     language: str = 'en'
 
-    def build(self):
+    def build(self) -> Request:
         url = 'https://language.googleapis.com/v1/documents:analyzeEntities'
         method = 'POST'
         headers = {'Content-Type': 'application/json'}
@@ -48,7 +48,7 @@ class AmazonComprehendSentimentRequestModel(RequestModel):
     region_name: str
     language_code: str
 
-    def build(self):
+    def build(self) -> Request:
         return AmazonComprehendSentimentRequest(
             aws_access_key=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_access_key,
