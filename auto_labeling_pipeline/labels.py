@@ -16,7 +16,7 @@ class Labels(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def convert_label(self, mapping: Optional[dict]) -> 'Labels':
+    def convert_label(self, mapping: Optional[dict] = None) -> 'Labels':
         raise NotImplementedError
 
     def dict(self) -> Sequence[dict]:
@@ -35,7 +35,7 @@ class ClassificationLabels(Labels):
         labels = [a for a in self.labels if a.label not in stop_labels]
         return ClassificationLabels(labels)
 
-    def convert_label(self, mapping: Optional[dict]) -> 'ClassificationLabels':
+    def convert_label(self, mapping: Optional[dict] = None) -> 'ClassificationLabels':
         if not mapping:
             return self
         for a in self.labels:
@@ -57,7 +57,7 @@ class SequenceLabels(Labels):
         labels = [a for a in self.labels if a.label not in stop_labels]
         return SequenceLabels(labels)
 
-    def convert_label(self, mapping: Optional[dict]) -> 'SequenceLabels':
+    def convert_label(self, mapping: Optional[dict] = None) -> 'SequenceLabels':
         if not mapping:
             return self
         for a in self.labels:
@@ -76,5 +76,5 @@ class Seq2seqLabels(Labels):
     def filter_by_name(self, stop_labels: Optional[Set] = None) -> 'Seq2seqLabels':
         return self
 
-    def convert_label(self, mapping: Optional[dict]) -> 'Seq2seqLabels':
+    def convert_label(self, mapping: Optional[dict] = None) -> 'Seq2seqLabels':
         return self
