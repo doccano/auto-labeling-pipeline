@@ -12,7 +12,7 @@ class Labels(metaclass=abc.ABCMeta):
         self.labels = labels
 
     @abc.abstractmethod
-    def filter_by_name(self, stop_labels: Optional[Set] = None) -> 'Labels':
+    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'Labels':
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -29,7 +29,7 @@ class ClassificationLabels(Labels):
         super().__init__(labels)
         self.labels: Sequence[ClassificationLabel] = labels
 
-    def filter_by_name(self, stop_labels: Optional[Set] = None) -> 'ClassificationLabels':
+    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'ClassificationLabels':
         if not stop_labels:
             return self
         labels = [a for a in self.labels if a.label not in stop_labels]
@@ -51,7 +51,7 @@ class SequenceLabels(Labels):
         super().__init__(labels)
         self.labels: Sequence[SequenceLabel] = labels
 
-    def filter_by_name(self, stop_labels: Optional[Set] = None) -> 'SequenceLabels':
+    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'SequenceLabels':
         if not stop_labels:
             return self
         labels = [a for a in self.labels if a.label not in stop_labels]
@@ -73,7 +73,7 @@ class Seq2seqLabels(Labels):
         super().__init__(labels)
         self.labels: Sequence[Seq2seqLabel] = labels
 
-    def filter_by_name(self, stop_labels: Optional[Set] = None) -> 'Seq2seqLabels':
+    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'Seq2seqLabels':
         return self
 
     def convert_label(self, mapping: Optional[dict] = None) -> 'Seq2seqLabels':
