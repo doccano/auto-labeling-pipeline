@@ -51,7 +51,7 @@ class AmazonComprehendSentimentRequestModel(RequestModel):
     def build(self) -> Request:
         return AmazonComprehendSentimentRequest(
             aws_access_key=self.aws_access_key,
-            aws_secret_access_key=self.aws_secret_access_key,
+            aws_secret_access_key=self.aws_secret_access_key.get_secret_value(),
             region_name=self.region_name,
             language_code=self.language_code
         )
