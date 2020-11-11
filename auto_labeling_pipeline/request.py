@@ -16,6 +16,7 @@ class Request(metaclass=abc.ABCMeta):
     def __init__(self, **kwargs):
         pass
 
+    @abc.abstractmethod
     def send(self, text: str):
         raise NotImplementedError
 
