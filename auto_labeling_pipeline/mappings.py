@@ -5,7 +5,7 @@ from typing import Optional, Type, Union
 from jinja2 import Template
 
 from auto_labeling_pipeline.label import ClassificationLabel, Seq2seqLabel, SequenceLabel
-from auto_labeling_pipeline.labels import ClassificationLabels, Seq2seqLabels, SequenceLabels
+from auto_labeling_pipeline.labels import ClassificationLabels, Labels, Seq2seqLabels, SequenceLabels
 
 TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
 LABEL_CLASS = Type[Union[ClassificationLabel, Seq2seqLabel, SequenceLabel]]
@@ -22,7 +22,7 @@ class MappingTemplate:
             template = self.load()
         self.template = Template(template)
 
-    def render(self, response: dict):
+    def render(self, response: dict) -> Labels:
         rendered_json = self.template.render(input=response)
         labels = json.loads(rendered_json)
         labels = [self.label_class(**label) for label in labels]
