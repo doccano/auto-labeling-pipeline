@@ -10,6 +10,7 @@ flake8 = "*"
 pytest-cov = "*"
 isort = "*"
 mypy = "*"
+vcrpy = "*"
 
 [packages]
 requests = "*"
