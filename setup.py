@@ -8,7 +8,7 @@ from setuptools import find_packages, setup
 
 # Package meta-data.
 NAME = 'auto-labeling-pipeline'
-DESCRIPTION = 'Auto labeling client for doccano'
+DESCRIPTION = 'Auto labeling pipeline for doccano'
 URL = 'https://github.com/doccano/auto-labeling-pipeline'
 EMAIL = 'hiroki.nakayama.py@gmail.com'
 AUTHOR = 'Hironsan'
@@ -22,7 +22,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist bdist_wheel upload')
     sys.exit()
 
-required = ['requests']
+required = ['requests', 'boto3', 'pydantic', 'jinja2']
 
 setup(
     name=NAME,
