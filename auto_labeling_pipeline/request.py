@@ -32,14 +32,14 @@ class RESTRequest(Request):
         self.headers = kwargs['headers']
 
     def send(self, text: str):
-        body = render(json.dumps(self.body), text)
-        params = render(json.dumps(self.params), text)
+        body = json.loads(render(json.dumps(self.body), text))
+        params = json.loads(render(json.dumps(self.params), text))
         response = requests.request(
             url=self.url,
             method=self.method,
             params=params,
             headers=self.headers,
-            data=body
+            json=body
         ).json()
         return response
 
