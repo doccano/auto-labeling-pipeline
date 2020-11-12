@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: '{"Text": "I am very sad.", "LanguageCode": "en"}'
+    headers:
+      Content-Length:
+      - '48'
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24veC1hbXotanNvbi0xLjE=
+      User-Agent:
+      - !!binary |
+        Qm90bzMvMS4xNi4xNyBQeXRob24vMy44LjUgRGFyd2luLzE4LjIuMCBCb3RvY29yZS8xLjE5LjE3
+      X-Amz-Date:
+      - !!binary |
+        MjAyMDExMTJUMjM0NTE5Wg==
+      X-Amz-Target:
+      - !!binary |
+        Q29tcHJlaGVuZF8yMDE3MTEyNy5EZXRlY3RTZW50aW1lbnQ=
+    method: POST
+    uri: https://comprehend.us-east-1.amazonaws.com/
+  response:
+    body:
+      string: '{"Sentiment":"NEGATIVE","SentimentScore":{"Mixed":3.0784069622313837E-6,"Negative":0.9865885376930237,"Neutral":0.012784095481038094,"Positive":6.242868839763105E-4}}'
+    headers:
+      Content-Length:
+      - '166'
+      Content-Type:
+      - application/x-amz-json-1.1
+      Date:
+      - Thu, 12 Nov 2020 23:45:19 GMT
+      x-amzn-RequestId:
+      - 396b0fa4-740b-4d38-a140-390305000035
+    status:
+      code: 200
+      message: OK
+version: 1
