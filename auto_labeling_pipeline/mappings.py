@@ -1,46 +1,61 @@
 import json
 import pathlib
-from typing import Optional, Type, Union
+from typing import Optional, Type
 
 from jinja2 import Template
 
-from auto_labeling_pipeline.label import ClassificationLabel, Seq2seqLabel, SequenceLabel
+from auto_labeling_pipeline.label import ClassificationLabel, Label, Seq2seqLabel, SequenceLabel
 from auto_labeling_pipeline.labels import ClassificationLabels, Labels, Seq2seqLabels, SequenceLabels
 
 TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
-LABEL_CLASS = Type[Union[ClassificationLabel, Seq2seqLabel, SequenceLabel]]
-LABELS_CLASS = Type[Union[ClassificationLabels, Seq2seqLabels, SequenceLabels]]
 
 
 class MappingTemplate:
-    label_class: LABEL_CLASS = ClassificationLabel
-    labels_class: LABELS_CLASS = ClassificationLabels
+    task: str = ''
     template_file: str = ''
 
-    def __init__(self, template: Optional[str] = None):
+    def __init__(self, task: str = '', template: Optional[str] = None):
         if self.template_file:
             template = self.load()
+        self.task = self.task or task
         self.template = Template(template)
 
     def render(self, response: dict) -> Labels:
         rendered_json = self.template.render(input=response)
         labels = json.loads(rendered_json)
         labels = [self.label_class(**label) for label in labels]
-        return self.labels_class(labels)
+        labels = self.label_collection(labels)
+        return labels
 
     def load(self) -> str:
         filepath = TEMPLATE_DIR / self.template_file
         with open(filepath) as f:
             return f.read()
 
+    @property
+    def label_class(self) -> Type[Label]:
+        task_to_label = {
+            'TextClassification': ClassificationLabel,
+            'SequenceLabeling': SequenceLabel,
+            'Seq2seq': Seq2seqLabel
+        }
+        return task_to_label[self.task]
+
+    @property
+    def label_collection(self) -> Type[Labels]:
+        task_to_collection = {
+            'TextClassification': ClassificationLabels,
+            'SequenceLabeling': SequenceLabels,
+            'Seq2seq': Seq2seqLabels
+        }
+        return task_to_collection[self.task]
+
 
 class AmazonComprehendSentimentTemplate(MappingTemplate):
-    label_class = ClassificationLabel
-    labels_class = ClassificationLabels
+    task = 'TextClassification'
     template_file = 'amazon_comprehend_sentiment.jinja2'
 
 
 class GCPEntitiesTemplate(MappingTemplate):
-    label_class = SequenceLabel
-    labels_class = ClassificationLabels
+    task = 'SequenceLabeling'
     template_file = 'gcp_entities.jinja2'
