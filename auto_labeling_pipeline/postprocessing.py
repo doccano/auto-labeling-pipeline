@@ -19,5 +19,5 @@ class PostProcessor(BasePostProcessor):
 
     def transform(self, labels: Labels) -> Labels:
         labels = labels.filter_by_name(self.stop_labels)
-        labels = labels.convert_label(self.mapping)
+        labels = labels.replace_label(self.mapping)
         return labels
