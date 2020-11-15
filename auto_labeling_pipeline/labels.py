@@ -1,80 +1,43 @@
 import abc
-from typing import Optional, Sequence, Set
+from typing import List, Optional, Set
 
-from pydantic import BaseModel
-
-from auto_labeling_pipeline.label import ClassificationLabel, Seq2seqLabel, SequenceLabel
+from auto_labeling_pipeline.label import Label
 
 
 class Labels(metaclass=abc.ABCMeta):
 
-    def __init__(self, labels: Sequence[BaseModel]):
+    def __init__(self, labels: List[Label]):
         self.labels = labels
 
-    @abc.abstractmethod
     def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'Labels':
-        raise NotImplementedError
+        if not stop_labels:
+            return self
+        labels = [label for label in self.labels if not label.included(stop_labels)]
+        return self.__class__(labels)
 
-    @abc.abstractmethod
-    def convert_label(self, mapping: Optional[dict] = None) -> 'Labels':
-        raise NotImplementedError
+    def replace_label(self, mapping: Optional[dict] = None) -> 'Labels':
+        if not mapping:
+            return self
+        for label in self.labels:
+            label.replace(mapping)
+        return self.__class__(self.labels)
 
-    def dict(self) -> Sequence[dict]:
+    def dict(self) -> List[dict]:
         return [label.dict() for label in self.labels]
 
 
 class ClassificationLabels(Labels):
-
-    def __init__(self, labels: Sequence[ClassificationLabel]):
-        super().__init__(labels)
-        self.labels: Sequence[ClassificationLabel] = labels
-
-    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'ClassificationLabels':
-        if not stop_labels:
-            return self
-        labels = [a for a in self.labels if a.label not in stop_labels]
-        return ClassificationLabels(labels)
-
-    def convert_label(self, mapping: Optional[dict] = None) -> 'ClassificationLabels':
-        if not mapping:
-            return self
-        for a in self.labels:
-            label = a.label
-            if label in mapping:
-                a.label = mapping[label]
-        return ClassificationLabels(self.labels)
+    pass
 
 
 class SequenceLabels(Labels):
-
-    def __init__(self, labels: Sequence[SequenceLabel]):
-        super().__init__(labels)
-        self.labels: Sequence[SequenceLabel] = labels
-
-    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'SequenceLabels':
-        if not stop_labels:
-            return self
-        labels = [a for a in self.labels if a.label not in stop_labels]
-        return SequenceLabels(labels)
-
-    def convert_label(self, mapping: Optional[dict] = None) -> 'SequenceLabels':
-        if not mapping:
-            return self
-        for a in self.labels:
-            label = a.label
-            if label in mapping:
-                a.label = mapping[label]
-        return SequenceLabels(self.labels)
+    pass
 
 
 class Seq2seqLabels(Labels):
 
-    def __init__(self, labels: Sequence[Seq2seqLabel]):
-        super().__init__(labels)
-        self.labels: Sequence[Seq2seqLabel] = labels
-
-    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'Seq2seqLabels':
+    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> Labels:
         return self
 
-    def convert_label(self, mapping: Optional[dict] = None) -> 'Seq2seqLabels':
+    def replace_label(self, mapping: Optional[dict] = None) -> Labels:
         return self

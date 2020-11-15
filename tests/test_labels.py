@@ -57,7 +57,7 @@ class TestClassificationLabels:
 
     def test_convert_label(self, example_classification_data):
         mapping = {'C': 'D'}
-        labels = example_classification_data.convert_label(mapping)
+        labels = example_classification_data.replace_label(mapping)
         labels = labels.dict()
         expected = [
             {'label': 'A'},
@@ -67,7 +67,7 @@ class TestClassificationLabels:
         assert labels == expected
 
     def test_dont_convert_label(self, example_classification_data):
-        labels = example_classification_data.convert_label()
+        labels = example_classification_data.replace_label()
         assert labels == example_classification_data
 
 
@@ -88,7 +88,7 @@ class TestSequenceLabels:
 
     def test_convert_label(self, example_sequence_data):
         mapping = {'C': 'D'}
-        labels = example_sequence_data.convert_label(mapping)
+        labels = example_sequence_data.replace_label(mapping)
         labels = labels.dict()
         expected = [
             {'label': 'A', 'start_offset': 0, 'end_offset': 1},
@@ -98,7 +98,7 @@ class TestSequenceLabels:
         assert labels == expected
 
     def test_dont_convert_label(self, example_sequence_data):
-        labels = example_sequence_data.convert_label()
+        labels = example_sequence_data.replace_label()
         assert labels == example_sequence_data
 
 
@@ -111,5 +111,5 @@ class TestSeq2seqLabels:
 
     def test_convert_label(self, example_seq2seq_data):
         mapping = {'C': 'D'}
-        labels = example_seq2seq_data.convert_label(mapping)
+        labels = example_seq2seq_data.replace_label(mapping)
         assert labels == example_seq2seq_data
