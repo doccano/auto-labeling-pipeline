@@ -17,6 +17,7 @@ requests = "*"
 boto3 = "*"
 pydantic = "*"
 jinja2 = "*"
+joblib = "*"
 
 [requires]
 python_version = "3.8"

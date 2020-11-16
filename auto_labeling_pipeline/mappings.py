@@ -1,6 +1,6 @@
 import json
 import pathlib
-from typing import Optional, Type
+from typing import Dict, Optional, Type
 
 from jinja2 import Template
 
@@ -18,10 +18,11 @@ class MappingTemplate:
         if self.template_file:
             template = self.load()
         self.task = self.task or task
-        self.template = Template(template)
+        self.template = template
 
-    def render(self, response: dict) -> Labels:
-        rendered_json = self.template.render(input=response)
+    def render(self, response: Dict) -> Labels:
+        template = Template(self.template)
+        rendered_json = template.render(input=response)
         labels = json.loads(rendered_json)
         labels = [self.label_class(**label) for label in labels]
         labels = self.label_collection(labels)
@@ -31,6 +32,12 @@ class MappingTemplate:
         filepath = TEMPLATE_DIR / self.template_file
         with open(filepath) as f:
             return f.read()
+
+    def dict(self) -> Dict[str, Optional[str]]:
+        return {
+            'template': self.template,
+            'task': self.task
+        }
 
     @property
     def label_class(self) -> Type[Label]:
