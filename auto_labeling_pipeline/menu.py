@@ -20,7 +20,7 @@ class Option(BaseModel, abc.ABC):
 class Options:
     options = [
         Option(
-            name='Custom Rest Request',
+            name='Custom REST Request',
             task='Any',
             model=CustomRESTRequestModel,
             template=MappingTemplate

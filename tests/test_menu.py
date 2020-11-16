@@ -19,7 +19,7 @@ def test_filter_task(task, expected):
 @pytest.mark.parametrize(
     'option_name',
     [
-        'Custom Rest Request',
+        'Custom REST Request',
         'Amazon Comprehend Sentiment Analysis',
         'GCP Entity Analysis'
     ]
