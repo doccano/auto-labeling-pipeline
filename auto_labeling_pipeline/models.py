@@ -27,7 +27,7 @@ class CustomRESTRequestModel(RequestModel):
 class GCPEntitiesRequestModel(RequestModel):
     key: str
     type: Literal['TYPE_UNSPECIFIED', 'PLAIN_TEXT', 'HTML'] = 'TYPE_UNSPECIFIED'
-    language: str = 'en'
+    language: Literal['zh', 'zh-Hant', 'en', 'fr', 'de', 'it', 'ja', 'ko', 'pt', 'ru', 'es'] = 'en'
 
     def build(self) -> Request:
         url = 'https://language.googleapis.com/v1/documents:analyzeEntities'
@@ -48,7 +48,7 @@ class AmazonComprehendSentimentRequestModel(RequestModel):
     aws_access_key: str
     aws_secret_access_key: str
     region_name: str
-    language_code: str
+    language_code: Literal['en', 'es', 'fr', 'de', 'it', 'pt', 'ar', 'hi', 'ja', 'ko', 'zh', 'zh-TW'] = 'en'
 
     def build(self) -> Request:
         return AmazonComprehendSentimentRequest(
