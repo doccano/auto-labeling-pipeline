@@ -1,4 +1,3 @@
-import abc
 from typing import List, Literal, Type
 
 from pydantic import BaseModel
@@ -9,7 +8,7 @@ from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel
 from auto_labeling_pipeline.postprocessing import BasePostProcessor, PostProcessor
 
 
-class Option(BaseModel, abc.ABC):
+class Option(BaseModel):
     name: str
     task: Literal['Any', 'TextClassification', 'SequenceLabeling', 'Seq2seq']
     model: Type[RequestModel]
