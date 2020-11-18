@@ -38,6 +38,6 @@ def test_amazon_comprehend_sentiment_request_model_create_sentiment_request():
     assert isinstance(request, AmazonComprehendSentimentRequest)
 
 
-def test_request_model_raises_not_implemented_error():
-    with pytest.raises(NotImplementedError):
-        RequestModel().build()
+def test_request_model_raises_type_error_on_instantiation():
+    with pytest.raises(TypeError):
+        RequestModel()

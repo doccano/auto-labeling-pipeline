@@ -1,3 +1,4 @@
+import abc
 from typing import Literal, Optional
 
 from pydantic import BaseModel
@@ -5,8 +6,9 @@ from pydantic import BaseModel
 from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, Request, RESTRequest
 
 
-class RequestModel(BaseModel):
+class RequestModel(BaseModel, abc.ABC):
 
+    @abc.abstractmethod
     def build(self) -> Request:
         raise NotImplementedError
 
