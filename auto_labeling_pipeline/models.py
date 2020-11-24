@@ -1,7 +1,7 @@
 import abc
 from typing import Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, Request, RESTRequest
 
@@ -14,7 +14,7 @@ class RequestModel(BaseModel, abc.ABC):
 
 
 class CustomRESTRequestModel(RequestModel):
-    url: str
+    url: HttpUrl
     method: Literal['GET', 'POST']
     params: Optional[dict]
     headers: Optional[dict]

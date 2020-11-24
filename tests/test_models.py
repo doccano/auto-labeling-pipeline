@@ -7,7 +7,7 @@ from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, RES
 
 def test_custom_rest_request_model_create_rest_request():
     model = CustomRESTRequestModel(
-        url='',
+        url='http://www.example.com',
         method='GET',
         params={},
         headers={},
