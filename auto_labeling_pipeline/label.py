@@ -11,7 +11,7 @@ class Label(BaseModel, abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def replace(self, mapping: Dict[str, str]):
+    def replace(self, mapping: Dict[str, str]) -> 'Label':
         raise NotImplementedError
 
 
@@ -21,8 +21,9 @@ class ClassificationLabel(Label):
     def included(self, labels: Set[str]) -> bool:
         return self.label in labels
 
-    def replace(self, mapping: Dict[str, str]):
-        self.label = mapping.get(self.label, self.label)
+    def replace(self, mapping: Dict[str, str]) -> 'Label':
+        label = mapping.get(self.label, self.label)
+        return ClassificationLabel(label=label)
 
 
 class SequenceLabel(Label):
@@ -33,8 +34,13 @@ class SequenceLabel(Label):
     def included(self, labels: Set[str]) -> bool:
         return self.label in labels
 
-    def replace(self, mapping: Dict[str, str]):
-        self.label = mapping.get(self.label, self.label)
+    def replace(self, mapping: Dict[str, str]) -> 'Label':
+        label = mapping.get(self.label, self.label)
+        return SequenceLabel(
+            label=label,
+            start_offset=self.start_offset,
+            end_offset=self.end_offset
+        )
 
 
 class Seq2seqLabel(Label):
@@ -43,5 +49,5 @@ class Seq2seqLabel(Label):
     def included(self, labels: Set[str]) -> bool:
         return self.text in labels
 
-    def replace(self, mapping: Dict[str, str]):
-        pass
+    def replace(self, mapping: Dict[str, str]) -> 'Label':
+        return self

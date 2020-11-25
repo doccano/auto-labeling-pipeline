@@ -18,8 +18,7 @@ class Labels(metaclass=abc.ABCMeta):
     def replace_label(self, mapping: Optional[Dict[str, str]] = None) -> 'Labels':
         if not mapping:
             return self
-        for label in self.labels:
-            label.replace(mapping)
+        self.labels = [label.replace(mapping) for label in self.labels]
         return self.__class__(self.labels)
 
     def dict(self) -> List[dict]:
