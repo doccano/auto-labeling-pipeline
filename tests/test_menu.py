@@ -1,17 +1,18 @@
 import pytest
 
 from auto_labeling_pipeline.menu import Options
+from auto_labeling_pipeline.task import Task
 
 
 @pytest.mark.parametrize(
     'task, expected',
     [
-        ('TextClassification', {'Any', 'TextClassification'}),
-        ('XXX', {'Any'})
+        ('TextClassification', {Task('Any'), Task('TextClassification')}),
+        ('XXX', {Task('Any')})
     ]
 )
 def test_filter_task(task, expected):
-    options = Options.filter_by_task(task=task)
+    options = Options.filter_by_task(task_name=task)
     tasks = {o.task for o in options}
     assert tasks == expected
 

@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Any, Type
 
 from auto_labeling_pipeline.label import ClassificationLabel, Label, Seq2seqLabel, SequenceLabel
 from auto_labeling_pipeline.labels import ClassificationLabels, Labels, Seq2seqLabels, SequenceLabels
@@ -8,6 +8,16 @@ class Task:
 
     def __init__(self, name: str):
         self.name = name
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Task):
+            return NotImplemented
+        if self.name == 'Any':
+            return True
+        return self.name == other.name
+
+    def __hash__(self) -> int:
+        return hash(self.name)
 
     @property
     def label_class(self) -> Type[Label]:

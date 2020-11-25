@@ -1,4 +1,4 @@
-from typing import List, Literal, Type
+from typing import List, Type
 
 from pydantic import BaseModel
 
@@ -6,41 +6,46 @@ from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate, G
 from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, CustomRESTRequestModel,
                                            GCPEntitiesRequestModel, RequestModel)
 from auto_labeling_pipeline.postprocessing import BasePostProcessor, PostProcessor
+from auto_labeling_pipeline.task import Task
 
 
 class Option(BaseModel):
     name: str
-    task: Literal['Any', 'TextClassification', 'SequenceLabeling', 'Seq2seq']
+    task: Task
     model: Type[RequestModel]
     template: Type[MappingTemplate]
     post_processor: Type[BasePostProcessor] = PostProcessor
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class Options:
     options = [
         Option(
             name='Custom REST Request',
-            task='Any',
+            task=Task('Any'),
             model=CustomRESTRequestModel,
             template=MappingTemplate
         ),
         Option(
             name='Amazon Comprehend Sentiment Analysis',
-            task='TextClassification',
+            task=Task('TextClassification'),
             model=AmazonComprehendSentimentRequestModel,
             template=AmazonComprehendSentimentTemplate
         ),
         Option(
             name='GCP Entity Analysis',
-            task='SequenceLabeling',
+            task=Task('SequenceLabeling'),
             model=GCPEntitiesRequestModel,
             template=GCPEntitiesTemplate
         )
     ]
 
     @classmethod
-    def filter_by_task(cls, task: str) -> List[Option]:
-        return list(filter(lambda o: o.task in {task, 'Any'}, cls.options))
+    def filter_by_task(cls, task_name: str) -> List[Option]:
+        task = Task(task_name)
+        return [option for option in cls.options if option.task == task]
 
     @classmethod
     def find(cls, option_name: str) -> Option:
