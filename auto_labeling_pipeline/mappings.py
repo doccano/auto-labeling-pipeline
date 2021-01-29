@@ -14,7 +14,7 @@ class MappingTemplate:
     task: Task
     template_file: str = ''
 
-    def __init__(self, task: Task = None, template: Optional[str] = None):
+    def __init__(self, task: Task = Task('Any'), template: Optional[str] = None):
         if self.template_file:
             template = self.load()
         self.task = self.task or task
