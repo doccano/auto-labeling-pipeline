@@ -19,6 +19,13 @@ class Option(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'schema': self.model.schema(),
+            'template': self.template().template
+        }
+
 
 class Options:
     options = [

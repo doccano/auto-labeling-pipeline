@@ -11,10 +11,10 @@ TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
 
 
 class MappingTemplate:
-    task: Type[Task]
+    task: Type[Task] = GenericTask
     template_file: str = ''
 
-    def __init__(self, task: Type[Task] = GenericTask, template: Optional[str] = None):
+    def __init__(self, task: Type[Task] = GenericTask, template: Optional[str] = ''):
         if self.template_file:
             template = self.load()
         self.task = self.task or task
