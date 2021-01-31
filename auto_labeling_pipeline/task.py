@@ -1,38 +1,46 @@
-from typing import Any, Type
+import abc
+from typing import Dict, List, Type
 
 from auto_labeling_pipeline.label import ClassificationLabel, Label, Seq2seqLabel, SequenceLabel
 from auto_labeling_pipeline.labels import ClassificationLabels, Labels, Seq2seqLabels, SequenceLabels
 
 
-class Task:
+class Task(abc.ABC):
+    label_class: Type[Label]
+    label_collection: Type[Labels]
 
-    def __init__(self, name: str):
-        self.name = name
+    @classmethod
+    def create_label_collection(cls, labels: List[Dict]) -> Labels:
+        _labels = [cls.label_class(**label) for label in labels]
+        return cls.label_collection(_labels)
 
-    def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Task):
-            return NotImplemented
-        if self.name == 'Any':
-            return True
-        return self.name == other.name
 
-    def __hash__(self) -> int:
-        return hash(self.name)
+class GenericTask(Task):
+    label_class = Label
+    label_collection = Labels
 
-    @property
-    def label_class(self) -> Type[Label]:
-        task_to_label = {
-            'TextClassification': ClassificationLabel,
-            'SequenceLabeling': SequenceLabel,
-            'Seq2seq': Seq2seqLabel
-        }
-        return task_to_label[self.name]
 
-    @property
-    def label_collection(self) -> Type[Labels]:
-        task_to_collection = {
-            'TextClassification': ClassificationLabels,
-            'SequenceLabeling': SequenceLabels,
-            'Seq2seq': Seq2seqLabels
-        }
-        return task_to_collection[self.name]
+class DocumentClassification(Task):
+    label_class = ClassificationLabel
+    label_collection = ClassificationLabels
+
+
+class SequenceLabeling(Task):
+    label_class = SequenceLabel
+    label_collection = SequenceLabels
+
+
+class Seq2seq(Task):
+    label_class = Seq2seqLabel
+    label_collection = Seq2seqLabels
+
+
+class TaskFactory:
+
+    @classmethod
+    def create(cls, task_name: str) -> Type[Task]:
+        return {
+            'DocumentClassification': DocumentClassification,
+            'SequenceLabeling': SequenceLabeling,
+            'Seq2seq': Seq2seq
+        }.get(task_name, GenericTask)

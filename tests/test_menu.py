@@ -1,14 +1,14 @@
 import pytest
 
 from auto_labeling_pipeline.menu import Options
-from auto_labeling_pipeline.task import Task
+from auto_labeling_pipeline.task import DocumentClassification, GenericTask
 
 
 @pytest.mark.parametrize(
     'task, expected',
     [
-        ('TextClassification', {Task('Any'), Task('TextClassification')}),
-        ('XXX', {Task('Any')})
+        ('DocumentClassification', {GenericTask, DocumentClassification}),
+        ('XXX', {GenericTask})
     ]
 )
 def test_filter_task(task, expected):

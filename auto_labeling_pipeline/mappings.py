@@ -1,20 +1,20 @@
 import json
 import pathlib
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Type
 
 from jinja2 import Template
 
 from auto_labeling_pipeline.labels import Labels
-from auto_labeling_pipeline.task import Task
+from auto_labeling_pipeline.task import DocumentClassification, GenericTask, SequenceLabeling, Task
 
 TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
 
 
 class MappingTemplate:
-    task: Task
+    task: Type[Task]
     template_file: str = ''
 
-    def __init__(self, task: Task = Task('Any'), template: Optional[str] = None):
+    def __init__(self, task: Type[Task] = GenericTask, template: Optional[str] = None):
         if self.template_file:
             template = self.load()
         self.task = self.task or task
@@ -24,8 +24,7 @@ class MappingTemplate:
         template = Template(self.template)
         rendered_json = template.render(input=response)
         labels = json.loads(rendered_json)
-        labels = [self.task.label_class(**label) for label in labels]
-        labels = self.task.label_collection(labels)
+        labels = self.task.create_label_collection(labels)
         return labels
 
     def load(self) -> str:
@@ -41,10 +40,10 @@ class MappingTemplate:
 
 
 class AmazonComprehendSentimentTemplate(MappingTemplate):
-    task = Task('TextClassification')
+    task = DocumentClassification
     template_file = 'amazon_comprehend_sentiment.jinja2'
 
 
 class GCPEntitiesTemplate(MappingTemplate):
-    task = Task('SequenceLabeling')
+    task = SequenceLabeling
     template_file = 'gcp_entities.jinja2'

@@ -6,12 +6,12 @@ from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate, G
 from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, CustomRESTRequestModel,
                                            GCPEntitiesRequestModel, RequestModel)
 from auto_labeling_pipeline.postprocessing import BasePostProcessor, PostProcessor
-from auto_labeling_pipeline.task import Task
+from auto_labeling_pipeline.task import DocumentClassification, GenericTask, SequenceLabeling, Task, TaskFactory
 
 
 class Option(BaseModel):
     name: str
-    task: Task
+    task: Type[Task]
     model: Type[RequestModel]
     template: Type[MappingTemplate]
     post_processor: Type[BasePostProcessor] = PostProcessor
@@ -24,19 +24,19 @@ class Options:
     options = [
         Option(
             name='Custom REST Request',
-            task=Task('Any'),
+            task=GenericTask,
             model=CustomRESTRequestModel,
             template=MappingTemplate
         ),
         Option(
             name='Amazon Comprehend Sentiment Analysis',
-            task=Task('TextClassification'),
+            task=DocumentClassification,
             model=AmazonComprehendSentimentRequestModel,
             template=AmazonComprehendSentimentTemplate
         ),
         Option(
             name='GCP Entity Analysis',
-            task=Task('SequenceLabeling'),
+            task=SequenceLabeling,
             model=GCPEntitiesRequestModel,
             template=GCPEntitiesTemplate
         )
@@ -44,8 +44,8 @@ class Options:
 
     @classmethod
     def filter_by_task(cls, task_name: str) -> List[Option]:
-        task = Task(task_name)
-        return [option for option in cls.options if option.task == task]
+        task = TaskFactory.create(task_name)
+        return [option for option in cls.options if option.task == task or option.task == GenericTask]
 
     @classmethod
     def find(cls, option_name: str) -> Option:
