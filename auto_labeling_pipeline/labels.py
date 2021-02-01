@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, List, Optional, Set
+from typing import Dict, Iterable, List, Optional
 
 from auto_labeling_pipeline.label import Label
 
@@ -9,10 +9,10 @@ class Labels(metaclass=abc.ABCMeta):
     def __init__(self, labels: List[Label]):
         self.labels = labels
 
-    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> 'Labels':
-        if not stop_labels:
+    def filter_by_name(self, vocabulary: Optional[Iterable[str]] = None) -> 'Labels':
+        if not vocabulary:
             return self
-        labels = [label for label in self.labels if not label.included(stop_labels)]
+        labels = [label for label in self.labels if label.included(vocabulary)]
         return self.__class__(labels)
 
     def replace_label(self, mapping: Optional[Dict[str, str]] = None) -> 'Labels':
@@ -35,7 +35,7 @@ class SequenceLabels(Labels):
 
 class Seq2seqLabels(Labels):
 
-    def filter_by_name(self, stop_labels: Optional[Set[str]] = None) -> Labels:
+    def filter_by_name(self, vocabulary: Optional[Iterable[str]] = None) -> Labels:
         return self
 
     def replace_label(self, mapping: Optional[Dict[str, str]] = None) -> Labels:

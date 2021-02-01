@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, Set
+from typing import Dict, Iterable
 
 from pydantic import BaseModel
 
@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class Label(BaseModel, abc.ABC):
 
     @abc.abstractmethod
-    def included(self, labels: Set[str]) -> bool:
+    def included(self, labels: Iterable[str]) -> bool:
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -18,7 +18,7 @@ class Label(BaseModel, abc.ABC):
 class ClassificationLabel(Label):
     label: str
 
-    def included(self, labels: Set[str]) -> bool:
+    def included(self, labels: Iterable[str]) -> bool:
         return self.label in labels
 
     def replace(self, mapping: Dict[str, str]) -> 'Label':
@@ -31,7 +31,7 @@ class SequenceLabel(Label):
     start_offset: int
     end_offset: int
 
-    def included(self, labels: Set[str]) -> bool:
+    def included(self, labels: Iterable[str]) -> bool:
         return self.label in labels
 
     def replace(self, mapping: Dict[str, str]) -> 'Label':
@@ -46,7 +46,7 @@ class SequenceLabel(Label):
 class Seq2seqLabel(Label):
     text: str
 
-    def included(self, labels: Set[str]) -> bool:
+    def included(self, labels: Iterable[str]) -> bool:
         return self.text in labels
 
     def replace(self, mapping: Dict[str, str]) -> 'Label':

@@ -19,7 +19,7 @@ def test_amazon_pipeline(cassettes_path):
             language_code='en'
         )
         template = AmazonComprehendSentimentTemplate()
-        post_processor = PostProcessor()
+        post_processor = PostProcessor({})
         labels = pipeline(
             text='I am very sad.',
             request_model=model,

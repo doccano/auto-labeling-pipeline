@@ -1,25 +1,29 @@
 import abc
-from typing import Dict, Optional, Set
+from typing import Dict
 
 from auto_labeling_pipeline.labels import Labels
 
 
 class BasePostProcessor(metaclass=abc.ABCMeta):
 
-    def __init__(self,
-                 stop_labels: Optional[Set[str]] = None,
-                 mapping: Optional[Dict[str, str]] = None):
-        self.stop_labels = stop_labels
+    def __init__(self, mapping: Dict[str, str]):
         self.mapping = mapping
 
     @abc.abstractmethod
     def transform(self, labels: Labels) -> Labels:
         raise NotImplementedError
 
+    def to_dict(self) -> Dict[str, str]:
+        return self.mapping
+
+    @classmethod
+    def load(cls, mapping: Dict[str, str]) -> 'BasePostProcessor':
+        return cls(mapping=mapping)
+
 
 class PostProcessor(BasePostProcessor):
 
     def transform(self, labels: Labels) -> Labels:
-        labels = labels.filter_by_name(self.stop_labels)
+        labels = labels.filter_by_name(self.mapping)
         labels = labels.replace_label(self.mapping)
         return labels

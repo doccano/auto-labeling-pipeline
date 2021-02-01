@@ -43,8 +43,8 @@ def example_seq2seq_data():
 class TestClassificationLabels:
 
     def test_filter_by_name(self, example_classification_data):
-        stop_labels = {'B', 'C', 'D'}
-        labels = example_classification_data.filter_by_name(stop_labels)
+        vocabulary = {'A'}
+        labels = example_classification_data.filter_by_name(vocabulary)
         labels = labels.dict()
         expected = [
             {'label': 'A'}
@@ -74,8 +74,8 @@ class TestClassificationLabels:
 class TestSequenceLabels:
 
     def test_filter_by_name(self, example_sequence_data):
-        stop_labels = {'B', 'C', 'D'}
-        labels = example_sequence_data.filter_by_name(stop_labels)
+        vocabulary = {'A'}
+        labels = example_sequence_data.filter_by_name(vocabulary)
         labels = labels.dict()
         expected = [
             {'label': 'A', 'start_offset': 0, 'end_offset': 1}
