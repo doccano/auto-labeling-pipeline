@@ -1,5 +1,5 @@
 import abc
-from typing import Literal, Optional
+from typing import Dict, Literal, Optional, Type
 
 from pydantic import BaseModel, HttpUrl
 
@@ -11,6 +11,22 @@ class RequestModel(BaseModel, abc.ABC):
     @abc.abstractmethod
     def build(self) -> Request:
         raise NotImplementedError
+
+
+class RequestModelFactory:
+
+    @classmethod
+    def create(cls, model_name: str, attributes: Dict) -> RequestModel:
+        subclass = cls.find(model_name)
+        model = subclass(**attributes)
+        return model
+
+    @classmethod
+    def find(cls, model_name: str) -> Type[RequestModel]:
+        for subclass in RequestModel.__subclasses__():
+            if subclass.__name__ == model_name:
+                return subclass
+        raise NameError(f'{model_name} is not found.')
 
 
 class CustomRESTRequestModel(RequestModel):
