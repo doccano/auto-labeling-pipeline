@@ -55,7 +55,8 @@ class GCPEntitiesRequestModel(RequestModel):
                 'type': self.type,
                 'language': self.language,
                 'content': '{{ text }}'
-            }
+            },
+            'encodingType': 'UTF32'
         }
         return RESTRequest(url=url, method=method, headers=headers, params=params, body=body)
 

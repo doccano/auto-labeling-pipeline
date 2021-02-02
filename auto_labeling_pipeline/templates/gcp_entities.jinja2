@@ -1,5 +1,6 @@
 [
-  {% for entity in input.entities %}
+  {% for entity in entities %}
+    {% set outer_loop = loop %}
     {% for mention in entity.mentions %}
       {% if mention.text.content == entity.name %}
         {%- set start_offset = mention.text.beginOffset -%}
@@ -8,9 +9,8 @@
           "label": "{{ entity.type }}",
           "start_offset": {{ start_offset }},
           "end_offset": {{ end_offset }}
-        }
+        }{% if not outer_loop.last %},{% endif %}
       {% endif %}
     {% endfor %}
-    {% if not loop.last %},{% endif %}
   {% endfor %}
 ]
