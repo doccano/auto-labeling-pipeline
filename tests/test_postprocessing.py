@@ -1,4 +1,3 @@
-from auto_labeling_pipeline.label import ClassificationLabel
 from auto_labeling_pipeline.labels import ClassificationLabels
 from auto_labeling_pipeline.postprocessing import PostProcessor
 
@@ -9,7 +8,6 @@ def test_postprocessor():
         {'label': 'ORG'},
         {'label': 'Facility'}
     ]
-    labels = [ClassificationLabel(**label) for label in labels]
     labels = ClassificationLabels(labels)
     mapping = {'Facility': 'ORG'}
     processor = PostProcessor(mapping=mapping)

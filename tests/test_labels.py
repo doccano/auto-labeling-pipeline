@@ -1,6 +1,5 @@
 import pytest
 
-from auto_labeling_pipeline.label import ClassificationLabel, Seq2seqLabel, SequenceLabel
 from auto_labeling_pipeline.labels import ClassificationLabels, Seq2seqLabels, SequenceLabels
 
 
@@ -11,7 +10,6 @@ def example_classification_data():
         {'label': 'B'},
         {'label': 'C'}
     ]
-    labels = [ClassificationLabel(**label) for label in labels]
     labels = ClassificationLabels(labels)
     return labels
 
@@ -23,7 +21,6 @@ def example_sequence_data():
         {'label': 'B', 'start_offset': 1, 'end_offset': 2},
         {'label': 'C', 'start_offset': 2, 'end_offset': 3}
     ]
-    labels = [SequenceLabel(**label) for label in labels]
     labels = SequenceLabels(labels)
     return labels
 
@@ -35,7 +32,6 @@ def example_seq2seq_data():
         {'text': 'B'},
         {'text': 'C'}
     ]
-    labels = [Seq2seqLabel(**label) for label in labels]
     labels = Seq2seqLabels(labels)
     return labels
 
