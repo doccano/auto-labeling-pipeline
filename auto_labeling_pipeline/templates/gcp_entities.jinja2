@@ -2,7 +2,7 @@
   {% for entity in input.entities %}
     {% set outer_loop = loop %}
     {% for mention in entity.mentions %}
-      {% if mention.text.content == entity.name %}
+      {% if (mention.type != 'COMMON') and (mention.text.content == entity.name) %}
         {%- set start_offset = mention.text.beginOffset -%}
         {%- set end_offset = start_offset + mention.text.content|length -%}
         {
