@@ -26,4 +26,5 @@ class PostProcessor(BasePostProcessor):
     def transform(self, labels: Labels) -> Labels:
         labels = labels.filter_by_name(self.mapping)
         labels = labels.replace_label(self.mapping)
+        labels = labels.remove_overlapping()
         return labels

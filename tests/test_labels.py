@@ -36,6 +36,16 @@ def example_seq2seq_data():
     return labels
 
 
+@pytest.fixture
+def example_sequence_overlap_data():
+    labels = [
+        {'label': 'A', 'start_offset': 0, 'end_offset': 2},
+        {'label': 'B', 'start_offset': 1, 'end_offset': 2}
+    ]
+    labels = SequenceLabels(labels)
+    return labels
+
+
 class TestClassificationLabels:
 
     def test_filter_by_name(self, example_classification_data):
@@ -96,6 +106,10 @@ class TestSequenceLabels:
     def test_dont_convert_label(self, example_sequence_data):
         labels = example_sequence_data.replace_label()
         assert labels == example_sequence_data
+
+    def test_remove_overlap(self, example_sequence_overlap_data):
+        labels = example_sequence_overlap_data.remove_overlapping()
+        assert len(labels.dict()) == 1
 
 
 class TestSeq2seqLabels:

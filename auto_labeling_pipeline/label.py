@@ -14,6 +14,13 @@ class Label(BaseModel, abc.ABC):
     def replace(self, mapping: Dict[str, str]) -> 'Label':
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def overlap_with(self, other) -> bool:
+        raise NotImplementedError
+
+    def __hash__(self):
+        return hash(tuple(self.dict()))
+
 
 class ClassificationLabel(Label):
     label: str
@@ -24,6 +31,9 @@ class ClassificationLabel(Label):
     def replace(self, mapping: Dict[str, str]) -> 'Label':
         label = mapping.get(self.label, self.label)
         return ClassificationLabel(label=label)
+
+    def overlap_with(self, other) -> bool:
+        return self.label == other.label
 
 
 class SequenceLabel(Label):
@@ -42,6 +52,13 @@ class SequenceLabel(Label):
             end_offset=self.end_offset
         )
 
+    def overlap_with(self, other) -> bool:
+        if other.end_offset <= self.start_offset:
+            return False
+        if self.end_offset <= other.start_offset:
+            return False
+        return True
+
 
 class Seq2seqLabel(Label):
     text: str
@@ -51,3 +68,6 @@ class Seq2seqLabel(Label):
 
     def replace(self, mapping: Dict[str, str]) -> 'Label':
         return self
+
+    def overlap_with(self, other) -> bool:
+        return self.text == other.text
