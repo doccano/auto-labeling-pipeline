@@ -13,7 +13,7 @@ def find_and_replace_value(obj, value, target='{{ text }}'):
             find_and_replace_value(v, value, target)
 
 
-class Request(metaclass=abc.ABCMeta):
+class Request(abc.ABC):
 
     def __init__(self, **kwargs):
         pass

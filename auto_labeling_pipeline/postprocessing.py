@@ -4,7 +4,7 @@ from typing import Dict
 from auto_labeling_pipeline.labels import Labels
 
 
-class BasePostProcessor(metaclass=abc.ABCMeta):
+class BasePostProcessor(abc.ABC):
 
     def __init__(self, mapping: Dict[str, str]):
         self.mapping = mapping
