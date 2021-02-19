@@ -1,5 +1,6 @@
 import abc
-from typing import Dict, Literal, Optional, Type
+from typing import Dict, Optional, Type
+from typing_extensions import Literal
 
 from pydantic import BaseModel, HttpUrl
 
