@@ -1,14 +1,16 @@
 import abc
-import json
 
 import boto3
 import requests
-from jinja2 import Template
 
 
-def render(template_str: str, text: str) -> str:
-    template = Template(template_str)
-    return template.render(text=text)
+def find_and_replace_value(obj, value, target='{{ text }}'):
+    for k, v in obj.items():
+        if v == target:
+            obj[k] = value
+            return
+        if isinstance(v, dict):
+            find_and_replace_value(v, value, target)
 
 
 class Request(metaclass=abc.ABCMeta):
@@ -32,14 +34,14 @@ class RESTRequest(Request):
         self.headers = kwargs['headers']
 
     def send(self, text: str):
-        body = json.loads(render(json.dumps(self.body), text))
-        params = json.loads(render(json.dumps(self.params), text))
+        find_and_replace_value(self.body, text)
+        find_and_replace_value(self.params, text)
         response = requests.request(
             url=self.url,
             method=self.method,
-            params=params,
+            params=self.params,
             headers=self.headers,
-            json=body
+            json=self.body
         ).json()
         return response
 
