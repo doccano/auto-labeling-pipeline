@@ -1,53 +1,10 @@
+import os
+
 import pytest
+import vcr
 
-from auto_labeling_pipeline.models import (AmazonComprehendEntityRequestModel, AmazonComprehendSentimentRequestModel,
-                                           CustomRESTRequestModel, GCPEntitiesRequestModel, RequestModel,
+from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, GCPEntitiesRequestModel, RequestModel,
                                            RequestModelFactory)
-from auto_labeling_pipeline.request import AmazonComprehendEntityRequest, AmazonComprehendSentimentRequest, RESTRequest
-
-
-def test_custom_rest_request_model_create_rest_request():
-    model = CustomRESTRequestModel(
-        url='http://www.example.com',
-        method='GET',
-        params={},
-        headers={},
-        body={}
-    )
-    request = model.build()
-    assert isinstance(request, RESTRequest)
-
-
-def test_gcp_entities_request_model_create_rest_request():
-    model = GCPEntitiesRequestModel(
-        key='lorem',
-        type='PLAIN_TEXT',
-        language='en'
-    )
-    request = model.build()
-    assert isinstance(request, RESTRequest)
-
-
-def test_amazon_comprehend_sentiment_request_model_create_sentiment_request():
-    model = AmazonComprehendSentimentRequestModel(
-        aws_access_key='',
-        aws_secret_access_key='',
-        region_name='us-east-1',
-        language_code='en'
-    )
-    request = model.build()
-    assert isinstance(request, AmazonComprehendSentimentRequest)
-
-
-def test_amazon_comprehend_entity_request_model_create_entity_request():
-    model = AmazonComprehendEntityRequestModel(
-        aws_access_key='',
-        aws_secret_access_key='',
-        region_name='us-east-1',
-        language_code='en'
-    )
-    request = model.build()
-    assert isinstance(request, AmazonComprehendEntityRequest)
 
 
 def test_request_model_raises_type_error_on_instantiation():
@@ -70,3 +27,24 @@ def test_request_model_factory_creates_model_correctly():
 def test_request_model_factory_raises_exception_if_model_does_not_exist():
     with pytest.raises(NameError):
         RequestModelFactory.create('NotExistModel', {})
+
+
+def test_gcp_entities_request(cassettes_path):
+    with vcr.use_cassette(str(cassettes_path / 'gcp_entities.yaml'), mode='once', filter_query_parameters=['key']):
+        model = GCPEntitiesRequestModel(key=os.environ.get('API_KEY_GCP', ''), type='PLAIN_TEXT', language='en')
+        response = model.send(text='Google, headquartered in Mountain View')
+        assert 'entities' in response
+
+
+def test_amazon_comprehend_sentiment_request(cassettes_path):
+    with vcr.use_cassette(str(cassettes_path / 'amazon_comprehend_sentiment.yaml'),
+                          mode='once',
+                          filter_headers=['authorization']):
+        model = AmazonComprehendSentimentRequestModel(
+            aws_access_key=os.environ.get('AWS_ACCESS_KEY', ''),
+            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY', ''),
+            region_name='us-east-1',
+            language_code='en'
+        )
+        response = model.send(text='I am very sad.')
+        assert 'Sentiment' in response

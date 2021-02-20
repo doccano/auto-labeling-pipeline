@@ -1,16 +1,24 @@
 import abc
 from typing import Dict, Literal, Optional, Type
 
+import boto3
+import requests
 from pydantic import BaseModel, HttpUrl
 
-from auto_labeling_pipeline.request import (AmazonComprehendEntityRequest, AmazonComprehendSentimentRequest, Request,
-                                            RESTRequest)
+
+def find_and_replace_value(obj, value, target='{{ text }}'):
+    for k, v in obj.items():
+        if v == target:
+            obj[k] = value
+            return
+        if isinstance(v, dict):
+            find_and_replace_value(v, value, target)
 
 
 class RequestModel(BaseModel, abc.ABC):
 
     @abc.abstractmethod
-    def build(self) -> Request:
+    def send(self, text: str):
         raise NotImplementedError
 
 
@@ -37,8 +45,17 @@ class CustomRESTRequestModel(RequestModel):
     headers: Optional[dict]
     body: Optional[dict]
 
-    def build(self) -> Request:
-        return RESTRequest(**self.dict())
+    def send(self, text: str):
+        find_and_replace_value(self.body, text)
+        find_and_replace_value(self.params, text)
+        response = requests.request(
+            url=self.url,
+            method=self.method,
+            params=self.params,
+            headers=self.headers,
+            json=self.body
+        ).json()
+        return response
 
 
 class GCPEntitiesRequestModel(RequestModel):
@@ -46,51 +63,70 @@ class GCPEntitiesRequestModel(RequestModel):
     type: Literal['TYPE_UNSPECIFIED', 'PLAIN_TEXT', 'HTML']
     language: Literal['zh', 'zh-Hant', 'en', 'fr', 'de', 'it', 'ja', 'ko', 'pt', 'ru', 'es']
 
-    def build(self) -> Request:
+    def send(self, text: str):
         url = 'https://language.googleapis.com/v1/documents:analyzeEntities'
-        method = 'POST'
         headers = {'Content-Type': 'application/json'}
         params = {'key': self.key}
         body = {
             'document': {
                 'type': self.type,
                 'language': self.language,
-                'content': '{{ text }}'
+                'content': text
             },
             'encodingType': 'UTF32'
         }
-        return RESTRequest(url=url, method=method, headers=headers, params=params, body=body)
+        response = requests.post(url, headers=headers, params=params, json=body).json()
+        return response
 
 
-class AmazonComprehendSentimentRequestModel(RequestModel):
+class AmazonComprehendRequestModel(RequestModel):
     aws_access_key: str
     aws_secret_access_key: str
-    region_name: Literal['us-east-2', 'us-east-1', 'us-west-2', 'ap-south-1', 'ap-northeast-2', 'ap-southeast-1',
-                         'ap-southeast-2', 'ap-northeast-1', 'ca-central-1', 'eu-central-1', 'eu-west-1', 'eu-west-2',
-                         'us-gov-west-1']
+    region_name: Literal[
+        'us-east-1',
+        'us-east-2',
+        'us-west-2',
+        'us-gov-west-1',
+        'ap-south-1',
+        'ap-southeast-1',
+        'ap-southeast-2',
+        'ap-northeast-1',
+        'ap-northeast-2',
+        'ca-central-1',
+        'eu-central-1',
+        'eu-west-1',
+        'eu-west-2',
+    ]
     language_code: Literal['en', 'es', 'fr', 'de', 'it', 'pt', 'ar', 'hi', 'ja', 'ko', 'zh', 'zh-TW']
 
-    def build(self) -> Request:
-        return AmazonComprehendSentimentRequest(
-            aws_access_key=self.aws_access_key,
+    @property
+    def client(self):
+        return boto3.client(
+            'comprehend',
+            aws_access_key_id=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region_name,
-            language_code=self.language_code
+            region_name=self.region_name
         )
 
+    def send(self, text: str):
+        raise NotImplementedError('Please use the subclass.')
 
-class AmazonComprehendEntityRequestModel(RequestModel):
-    aws_access_key: str
-    aws_secret_access_key: str
-    region_name: Literal['us-east-2', 'us-east-1', 'us-west-2', 'ap-south-1', 'ap-northeast-2', 'ap-southeast-1',
-                         'ap-southeast-2', 'ap-northeast-1', 'ca-central-1', 'eu-central-1', 'eu-west-1', 'eu-west-2',
-                         'us-gov-west-1']
-    language_code: Literal['en', 'es', 'fr', 'de', 'it', 'pt', 'ar', 'hi', 'ja', 'ko', 'zh', 'zh-TW']
 
-    def build(self) -> Request:
-        return AmazonComprehendEntityRequest(
-            aws_access_key=self.aws_access_key,
-            aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region_name,
-            language_code=self.language_code
+class AmazonComprehendSentimentRequestModel(AmazonComprehendRequestModel):
+
+    def send(self, text: str):
+        response = self.client.detect_sentiment(
+            Text=text,
+            LanguageCode=self.language_code
         )
+        return response
+
+
+class AmazonComprehendEntityRequestModel(AmazonComprehendRequestModel):
+
+    def send(self, text: str):
+        response = self.client.detect_entities(
+            Text=text,
+            LanguageCode=self.language_code
+        )
+        return response

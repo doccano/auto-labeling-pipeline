@@ -8,8 +8,7 @@ def pipeline(text: str,
              request_model: RequestModel,
              mapping_template: MappingTemplate,
              post_processing: BasePostProcessor) -> Labels:
-    request = request_model.build()
-    response = request.send(text)
+    response = request_model.send(text)
     labels = mapping_template.render(response)
     labels = post_processing.transform(labels)
     return labels
