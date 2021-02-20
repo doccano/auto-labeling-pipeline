@@ -6,15 +6,6 @@ import requests
 from pydantic import BaseModel, HttpUrl
 
 
-def find_and_replace_value(obj, value, target='{{ text }}'):
-    for k, v in obj.items():
-        if v == target:
-            obj[k] = value
-            return
-        if isinstance(v, dict):
-            find_and_replace_value(v, value, target)
-
-
 class RequestModel(BaseModel, abc.ABC):
 
     @abc.abstractmethod
@@ -38,12 +29,27 @@ class RequestModelFactory:
         raise NameError(f'{model_name} is not found.')
 
 
+def find_and_replace_value(obj, value, target='{{ text }}'):
+    for k, v in obj.items():
+        if v == target:
+            obj[k] = value
+            return
+        if isinstance(v, dict):
+            find_and_replace_value(v, value, target)
+
+
 class CustomRESTRequestModel(RequestModel):
+    """
+    This allow you to call any REST API.
+    """
     url: HttpUrl
     method: Literal['GET', 'POST']
     params: Optional[dict]
     headers: Optional[dict]
     body: Optional[dict]
+
+    class Config:
+        title = 'Custom REST Request'
 
     def send(self, text: str):
         find_and_replace_value(self.body, text)
@@ -59,9 +65,16 @@ class CustomRESTRequestModel(RequestModel):
 
 
 class GCPEntitiesRequestModel(RequestModel):
+    """
+    This allow you to analyze entities in a text by
+    <a href="https://cloud.google.com/natural-language/docs/analyzing-entities">Cloud Natural Language API</a>.
+    """
     key: str
     type: Literal['TYPE_UNSPECIFIED', 'PLAIN_TEXT', 'HTML']
     language: Literal['zh', 'zh-Hant', 'en', 'fr', 'de', 'it', 'ja', 'ko', 'pt', 'ru', 'es']
+
+    class Config:
+        title = 'GCP Entity Analysis'
 
     def send(self, text: str):
         url = 'https://language.googleapis.com/v1/documents:analyzeEntities'
@@ -113,6 +126,13 @@ class AmazonComprehendRequestModel(RequestModel):
 
 
 class AmazonComprehendSentimentRequestModel(AmazonComprehendRequestModel):
+    """
+    This allow you to determine the sentiment of a text by
+    <a href="https://docs.aws.amazon.com/en_us/comprehend/">Amazon Comprehend</a>.
+    """
+
+    class Config:
+        title = 'Amazon Comprehend Sentiment Analysis'
 
     def send(self, text: str):
         response = self.client.detect_sentiment(
@@ -123,6 +143,13 @@ class AmazonComprehendSentimentRequestModel(AmazonComprehendRequestModel):
 
 
 class AmazonComprehendEntityRequestModel(AmazonComprehendRequestModel):
+    """
+    This allow you to detect entities in the text by
+    <a href="https://docs.aws.amazon.com/en_us/comprehend/">Amazon Comprehend</a>.
+    """
+
+    class Config:
+        title = 'Amazon Comprehend Entity Recognition'
 
     def send(self, text: str):
         response = self.client.detect_entities(

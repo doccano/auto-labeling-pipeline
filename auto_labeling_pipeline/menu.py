@@ -29,40 +29,7 @@ class Option(BaseModel):
 
 
 class Options:
-    options = [
-        Option(
-            name='Custom REST Request',
-            description='This allow you to call some REST API.',
-            task=GenericTask,
-            model=CustomRESTRequestModel,
-            template=MappingTemplate
-        ),
-        Option(
-            name='Amazon Comprehend Sentiment Analysis',
-            description='This allow you to determine the sentiment of a text by '
-                        '<a href="https://docs.aws.amazon.com/en_us/comprehend/">Amazon Comprehend</a>.',
-            task=DocumentClassification,
-            model=AmazonComprehendSentimentRequestModel,
-            template=AmazonComprehendSentimentTemplate
-        ),
-        Option(
-            name='GCP Entity Analysis',
-            description='This allow you to analyze entities in a text by '
-                        '<a href="https://cloud.google.com/natural-language/docs/analyzing-entities">'
-                        'Cloud Natural Language API</a>.',
-            task=SequenceLabeling,
-            model=GCPEntitiesRequestModel,
-            template=GCPEntitiesTemplate
-        ),
-        Option(
-            name='Amazon Comprehend Entity Recognition',
-            description='This allow you to detect entities in the text by '
-                        '<a href="https://docs.aws.amazon.com/en_us/comprehend/">Amazon Comprehend</a>.',
-            task=SequenceLabeling,
-            model=AmazonComprehendEntityRequestModel,
-            template=AmazonComprehendEntityTemplate
-        )
-    ]
+    options: List[Option] = []
 
     @classmethod
     def filter_by_task(cls, task_name: str) -> List[Option]:
@@ -75,3 +42,22 @@ class Options:
             if option.name == option_name:
                 return option
         raise ValueError('Option {} is not found.'.format(option_name))
+
+    @classmethod
+    def register(cls, task: Type[Task], model: Type[RequestModel], template: Type[MappingTemplate]):
+        schema = model.schema()
+        cls.options.append(
+            Option(
+                name=schema.get('title'),
+                description=schema.get('description'),
+                task=task,
+                model=model,
+                template=template
+            )
+        )
+
+
+Options.register(GenericTask, CustomRESTRequestModel, MappingTemplate)
+Options.register(DocumentClassification, AmazonComprehendSentimentRequestModel, AmazonComprehendSentimentTemplate)
+Options.register(SequenceLabeling, GCPEntitiesRequestModel, GCPEntitiesTemplate)
+Options.register(SequenceLabeling, AmazonComprehendEntityRequestModel, AmazonComprehendEntityTemplate)
