@@ -1,0 +1,9 @@
+[
+  {% for entity in input.Entities %}
+    {
+      "label": "{{ entity.Type }}",
+      "start_offset": {{ entity.BeginOffset }},
+      "end_offset": {{ entity.EndOffset }}
+    }{% if not loop.last %},{% endif %}
+  {% endfor %}
+]

@@ -3,7 +3,8 @@ from typing import Dict, Literal, Optional, Type
 
 from pydantic import BaseModel, HttpUrl
 
-from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, Request, RESTRequest
+from auto_labeling_pipeline.request import (AmazonComprehendEntityRequest, AmazonComprehendSentimentRequest, Request,
+                                            RESTRequest)
 
 
 class RequestModel(BaseModel, abc.ABC):
@@ -71,6 +72,23 @@ class AmazonComprehendSentimentRequestModel(RequestModel):
 
     def build(self) -> Request:
         return AmazonComprehendSentimentRequest(
+            aws_access_key=self.aws_access_key,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=self.region_name,
+            language_code=self.language_code
+        )
+
+
+class AmazonComprehendEntityRequestModel(RequestModel):
+    aws_access_key: str
+    aws_secret_access_key: str
+    region_name: Literal['us-east-2', 'us-east-1', 'us-west-2', 'ap-south-1', 'ap-northeast-2', 'ap-southeast-1',
+                         'ap-southeast-2', 'ap-northeast-1', 'ca-central-1', 'eu-central-1', 'eu-west-1', 'eu-west-2',
+                         'us-gov-west-1']
+    language_code: Literal['en', 'es', 'fr', 'de', 'it', 'pt', 'ar', 'hi', 'ja', 'ko', 'zh', 'zh-TW']
+
+    def build(self) -> Request:
+        return AmazonComprehendEntityRequest(
             aws_access_key=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_access_key,
             region_name=self.region_name,

@@ -1,8 +1,9 @@
 import pytest
 
-from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, CustomRESTRequestModel,
-                                           GCPEntitiesRequestModel, RequestModel, RequestModelFactory)
-from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, RESTRequest
+from auto_labeling_pipeline.models import (AmazonComprehendEntityRequestModel, AmazonComprehendSentimentRequestModel,
+                                           CustomRESTRequestModel, GCPEntitiesRequestModel, RequestModel,
+                                           RequestModelFactory)
+from auto_labeling_pipeline.request import AmazonComprehendEntityRequest, AmazonComprehendSentimentRequest, RESTRequest
 
 
 def test_custom_rest_request_model_create_rest_request():
@@ -36,6 +37,17 @@ def test_amazon_comprehend_sentiment_request_model_create_sentiment_request():
     )
     request = model.build()
     assert isinstance(request, AmazonComprehendSentimentRequest)
+
+
+def test_amazon_comprehend_entity_request_model_create_entity_request():
+    model = AmazonComprehendEntityRequestModel(
+        aws_access_key='',
+        aws_secret_access_key='',
+        region_name='us-east-1',
+        language_code='en'
+    )
+    request = model.build()
+    assert isinstance(request, AmazonComprehendEntityRequest)
 
 
 def test_request_model_raises_type_error_on_instantiation():

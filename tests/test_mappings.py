@@ -1,6 +1,7 @@
 import json
 
-from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate, GCPEntitiesTemplate
+from auto_labeling_pipeline.mappings import (AmazonComprehendEntityTemplate, AmazonComprehendSentimentTemplate,
+                                             GCPEntitiesTemplate)
 
 
 def load_json(filepath):
@@ -63,5 +64,25 @@ def test_gcp_entities(data_path):
             'start_offset': 113,
             'end_offset': 114
         },
+    ]
+    assert labels == expected
+
+
+def test_amazon_comprehend_entities(data_path):
+    response = load_json(data_path / 'amazon_comprehend_entity.json')
+    template = AmazonComprehendEntityTemplate()
+    labels = template.render(response)
+    labels = labels.dict()
+    expected = [
+        {
+            'label': 'DATE',
+            'start_offset': 14,
+            'end_offset': 19
+        },
+        {
+            'label': 'LOCATION',
+            'start_offset': 23,
+            'end_offset': 30
+        }
     ]
     assert labels == expected

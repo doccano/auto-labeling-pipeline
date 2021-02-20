@@ -2,9 +2,10 @@ from typing import List, Type
 
 from pydantic import BaseModel
 
-from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate, GCPEntitiesTemplate, MappingTemplate
-from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, CustomRESTRequestModel,
-                                           GCPEntitiesRequestModel, RequestModel)
+from auto_labeling_pipeline.mappings import (AmazonComprehendEntityTemplate, AmazonComprehendSentimentTemplate,
+                                             GCPEntitiesTemplate, MappingTemplate)
+from auto_labeling_pipeline.models import (AmazonComprehendEntityRequestModel, AmazonComprehendSentimentRequestModel,
+                                           CustomRESTRequestModel, GCPEntitiesRequestModel, RequestModel)
 from auto_labeling_pipeline.task import DocumentClassification, GenericTask, SequenceLabeling, Task, TaskFactory
 
 
@@ -52,6 +53,14 @@ class Options:
             task=SequenceLabeling,
             model=GCPEntitiesRequestModel,
             template=GCPEntitiesTemplate
+        ),
+        Option(
+            name='Amazon Comprehend Entity Recognition',
+            description='This allow you to detect entities in the text by '
+                        '<a href="https://docs.aws.amazon.com/en_us/comprehend/">Amazon Comprehend</a>.',
+            task=SequenceLabeling,
+            model=AmazonComprehendEntityRequestModel,
+            template=AmazonComprehendEntityTemplate
         )
     ]
 

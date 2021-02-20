@@ -1,0 +1,19 @@
+{
+    "Entities": [
+        {
+            "Text": "today",
+            "Score": 0.97,
+            "Type": "DATE",
+            "BeginOffset": 14,
+            "EndOffset": 19
+        },
+        {
+            "Text": "Seattle",
+            "Score": 0.95,
+            "Type": "LOCATION",
+            "BeginOffset": 23,
+            "EndOffset": 30
+        }
+    ],
+    "LanguageCode": "en"
+}

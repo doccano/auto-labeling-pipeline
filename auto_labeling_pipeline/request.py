@@ -67,3 +67,10 @@ class AmazonComprehendSentimentRequest(AmazonComprehendRequest):
     def send(self, text: str):
         response = self.comprehend.detect_sentiment(Text=text, LanguageCode=self.language_code)
         return response
+
+
+class AmazonComprehendEntityRequest(AmazonComprehendRequest):
+
+    def send(self, text: str):
+        response = self.comprehend.detect_entities(Text=text, LanguageCode=self.language_code)
+        return response
