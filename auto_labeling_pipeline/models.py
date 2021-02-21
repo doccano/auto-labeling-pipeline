@@ -1,9 +1,10 @@
 import abc
-from typing import Dict, Literal, Optional, Type
+from typing import Dict, Optional, Type
 
 import boto3
 import requests
 from pydantic import BaseModel, HttpUrl
+from typing_extensions import Literal
 
 
 class RequestModel(BaseModel, abc.ABC):
