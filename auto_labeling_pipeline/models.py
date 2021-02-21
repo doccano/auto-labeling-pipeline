@@ -1,8 +1,8 @@
 import abc
 from typing import Dict, Optional, Type
-from typing_extensions import Literal
 
 from pydantic import BaseModel, HttpUrl
+from typing_extensions import Literal
 
 from auto_labeling_pipeline.request import AmazonComprehendSentimentRequest, Request, RESTRequest
 

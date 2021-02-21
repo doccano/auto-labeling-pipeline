@@ -18,6 +18,7 @@ boto3 = "*"
 pydantic = "*"
 jinja2 = "*"
 joblib = "*"
+typing-extensions = "*"
 
 [requires]
 python_version = "3.8"
