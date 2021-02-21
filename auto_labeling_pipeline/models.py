@@ -75,6 +75,13 @@ class GCPEntitiesRequestModel(RequestModel):
 
     class Config:
         title = 'GCP Entity Analysis'
+        schema_extra = {
+            # https://cloud.google.com/natural-language/docs/reference/rest/v1/Entity#Type
+            'types': [
+                'UNKNOWN', 'PERSON', 'LOCATION', 'ORGANIZATION', 'EVENT', 'WORK_OF_ART',
+                'CONSUMER_GOOD', 'OTHER', 'PHONE_NUMBER', 'ADDRESS', 'DATE', 'NUMBER', 'PRICE'
+            ]
+        }
 
     def send(self, text: str):
         url = 'https://language.googleapis.com/v1/documents:analyzeEntities'
@@ -133,6 +140,12 @@ class AmazonComprehendSentimentRequestModel(AmazonComprehendRequestModel):
 
     class Config:
         title = 'Amazon Comprehend Sentiment Analysis'
+        schema_extra = {
+            # https://docs.aws.amazon.com/comprehend/latest/dg/how-sentiment.html
+            'types': [
+                'POSITIVE', 'NEGATIVE', 'NEUTRAL', 'MIXED'
+            ]
+        }
 
     def send(self, text: str):
         response = self.client.detect_sentiment(
@@ -150,6 +163,13 @@ class AmazonComprehendEntityRequestModel(AmazonComprehendRequestModel):
 
     class Config:
         title = 'Amazon Comprehend Entity Recognition'
+        schema_extra = {
+            # https://docs.aws.amazon.com/comprehend/latest/dg/how-entities.html
+            'types': [
+                'PERSON', 'LOCATION', 'ORGANIZATION', 'COMMERCIAL_ITEM',
+                'EVENT', 'DATE', 'QUANTITY', 'TITLE', 'OTHER'
+            ]
+        }
 
     def send(self, text: str):
         response = self.client.detect_entities(
@@ -168,6 +188,16 @@ class AmazonComprehendPIIEntityRequestModel(AmazonComprehendRequestModel):
 
     class Config:
         title = 'Amazon Comprehend PII Entity Recognition'
+        schema_extra = {
+            # https://docs.aws.amazon.com/comprehend/latest/dg/how-pii.html
+            'types': [
+                'BANK_ACCOUNT_NUMBER', 'BANK_ROUTING', 'CREDIT_DEBIT_NUMBER',
+                'CREDIT_DEBIT_CVV', 'CREDIT_DEBIT_EXPIRY', 'PIN', 'EMAIL',
+                'ADDRESS', 'NAME', 'PHONE', 'SSN', 'DATE_TIME', 'PASSPORT_NUMBER',
+                'DRIVER_ID', 'URL', 'AGE', 'USERNAME', 'PASSWORD', 'AWS_ACCESS_KEY',
+                'AWS_SECRET_KEY', 'IP_ADDRESS', 'MAC_ADDRESS', 'ALL'
+            ]
+        }
 
     def send(self, text: str):
         response = self.client.detect_pii_entities(
