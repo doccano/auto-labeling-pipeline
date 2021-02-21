@@ -157,3 +157,21 @@ class AmazonComprehendEntityRequestModel(AmazonComprehendRequestModel):
             LanguageCode=self.language_code
         )
         return response
+
+
+class AmazonComprehendPIIEntityRequestModel(AmazonComprehendRequestModel):
+    """
+    This allow you to detect PII entities in the text by
+    <a href="https://docs.aws.amazon.com/en_us/comprehend/">Amazon Comprehend</a>.
+    """
+    language_code: Literal['en']
+
+    class Config:
+        title = 'Amazon Comprehend PII Entity Recognition'
+
+    def send(self, text: str):
+        response = self.client.detect_pii_entities(
+            Text=text,
+            LanguageCode=self.language_code
+        )
+        return response
