@@ -27,6 +27,10 @@ class Labels(abc.ABC):
     def remove_overlapping(self) -> 'Labels':
         raise NotImplementedError
 
+    def merge(self, others: 'Labels') -> 'Labels':
+        self.labels.extend(others.labels)
+        return self.remove_overlapping()
+
     def dict(self) -> List[dict]:
         return [label.dict() for label in self.labels]
 

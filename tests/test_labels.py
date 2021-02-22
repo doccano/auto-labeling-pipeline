@@ -76,6 +76,14 @@ class TestClassificationLabels:
         labels = example_classification_data.replace_label()
         assert labels == example_classification_data
 
+    def test_merge(self):
+        labels = ClassificationLabels([{'label': 'A'}, {'label': 'C'}])
+        other = ClassificationLabels([{'label': 'A'}, {'label': 'B'}])
+        labels = labels.merge(other)
+        expected = [{'label': 'A'}, {'label': 'B'}, {'label': 'C'}]
+        actual = sorted(labels.dict(), key=lambda x: x['label'])
+        assert actual == expected
+
 
 class TestSequenceLabels:
 
@@ -111,6 +119,24 @@ class TestSequenceLabels:
         labels = example_sequence_overlap_data.remove_overlapping()
         assert len(labels.dict()) == 1
 
+    def test_merge(self):
+        labels = SequenceLabels([
+            {'label': 'A', 'start_offset': 0, 'end_offset': 1},
+            {'label': 'B', 'start_offset': 3, 'end_offset': 5}
+        ])
+        others = SequenceLabels([
+            {'label': 'C', 'start_offset': 1, 'end_offset': 3},
+            {'label': 'B', 'start_offset': 1, 'end_offset': 2}
+        ])
+        labels = labels.merge(others)
+        expected = [
+            {'label': 'A', 'start_offset': 0, 'end_offset': 1},
+            {'label': 'C', 'start_offset': 1, 'end_offset': 3},
+            {'label': 'B', 'start_offset': 3, 'end_offset': 5}
+        ]
+        actual = sorted(labels.dict(), key=lambda x: x['start_offset'])
+        assert actual == expected
+
 
 class TestSeq2seqLabels:
 
@@ -123,3 +149,11 @@ class TestSeq2seqLabels:
         mapping = {'C': 'D'}
         labels = example_seq2seq_data.replace_label(mapping)
         assert labels == example_seq2seq_data
+
+    def test_merge(self):
+        labels = Seq2seqLabels([{'text': 'A'}, {'text': 'C'}])
+        other = Seq2seqLabels([{'text': 'A'}, {'text': 'B'}])
+        labels = labels.merge(other)
+        expected = [{'text': 'A'}, {'text': 'B'}, {'text': 'C'}]
+        actual = sorted(labels.dict(), key=lambda x: x['text'])
+        assert actual == expected
