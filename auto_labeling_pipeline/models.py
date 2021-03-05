@@ -3,7 +3,7 @@ from typing import Dict, Optional, Type
 
 import boto3
 import requests
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, AnyHttpUrl
 from typing_extensions import Literal
 
 
@@ -43,7 +43,7 @@ class CustomRESTRequestModel(RequestModel):
     """
     This allow you to call any REST API.
     """
-    url: HttpUrl
+    url: AnyHttpUrl
     method: Literal['GET', 'POST']
     params: Optional[dict]
     headers: Optional[dict]
