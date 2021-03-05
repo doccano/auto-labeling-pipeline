@@ -3,7 +3,7 @@ from typing import Dict, Optional, Type
 
 import boto3
 import requests
-from pydantic import BaseModel, AnyHttpUrl
+from pydantic import AnyHttpUrl, BaseModel
 from typing_extensions import Literal
 
 
