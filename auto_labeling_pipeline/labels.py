@@ -48,8 +48,13 @@ class SequenceLabels(Labels):
     def remove_overlapping(self) -> 'Labels':
         target = self.label_class(start_offset=0, end_offset=0, label='')
         labels = sorted(self.labels, key=operator.attrgetter('start_offset'))
-        labels = [target := label for label in labels if not label.overlap_with(target)]  # type: ignore
-        return self.__class__([label.dict() for label in labels])
+        _labels = []
+        for label in labels:
+            if label.overlap_with(target):
+                continue
+            target = label  # type: ignore
+            _labels.append(label)
+        return self.__class__([label.dict() for label in _labels])
 
 
 class Seq2seqLabels(Labels):
