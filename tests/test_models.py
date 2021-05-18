@@ -18,7 +18,7 @@ def test_request_model_factory_creates_model_correctly():
         type='PLAIN_TEXT',
         language='en'
     )
-    model_name = model.__repr_name__()
+    model_name = model.Config.title
     attributes = model.dict()
     restored_model = RequestModelFactory.create(model_name, attributes)
     assert restored_model == model
