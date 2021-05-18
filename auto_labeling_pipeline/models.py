@@ -25,7 +25,7 @@ class RequestModelFactory:
     @classmethod
     def find(cls, model_name: str) -> Type[RequestModel]:
         for subclass in RequestModel.__subclasses__():
-            if subclass.__name__ == model_name:
+            if subclass.Config.title == model_name:
                 return subclass
         raise NameError(f'{model_name} is not found.')
 
