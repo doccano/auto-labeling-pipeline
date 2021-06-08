@@ -208,7 +208,7 @@ class AmazonComprehendPIIEntityRequestModel(AmazonComprehendRequestModel):
         return response
 
 
-class GCPVisionLabelDetectionRequestModel(RequestModel):
+class GCPImageLabelDetectionRequestModel(RequestModel):
     """
     This allow you to detect labels for a image by
     <a href="https://cloud.google.com/vision/docs/labels">Cloud Vision API</a>.
@@ -216,7 +216,7 @@ class GCPVisionLabelDetectionRequestModel(RequestModel):
     key: str
 
     class Config:
-        title = 'GCP Vision Label Detection'
+        title = 'GCP Image Label Detection'
 
     def send(self, b64_image: str):
         url = 'https://vision.googleapis.com/v1/images:annotate'

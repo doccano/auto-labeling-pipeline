@@ -82,6 +82,6 @@ Options.register(
 )
 Options.register(
     t.ImageClassification,
-    mo.GCPVisionLabelDetectionRequestModel,
+    mo.GCPImageLabelDetectionRequestModel,
     mp.GCPImageLabelDetectionTemplate
 )
