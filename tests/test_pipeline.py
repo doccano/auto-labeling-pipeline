@@ -2,10 +2,12 @@ import os
 
 import vcr
 
-from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate
-from auto_labeling_pipeline.models import AmazonComprehendSentimentRequestModel
+from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate, GCPImageLabelDetectionTemplate
+from auto_labeling_pipeline.models import AmazonComprehendSentimentRequestModel, GCPImageLabelDetectionRequestModel
 from auto_labeling_pipeline.pipeline import pipeline
 from auto_labeling_pipeline.postprocessing import PostProcessor
+
+from .test_models import load_image_as_b64
 
 
 def test_amazon_pipeline(cassettes_path):
@@ -22,6 +24,28 @@ def test_amazon_pipeline(cassettes_path):
         post_processor = PostProcessor({})
         labels = pipeline(
             text='I am very sad.',
+            request_model=model,
+            mapping_template=template,
+            post_processing=post_processor
+        )
+        labels = labels.dict()
+        assert isinstance(labels, list)
+        assert len(labels) == 1
+        assert 'label' in labels[0]
+
+
+def test_gcp_label_detection_pipeline(data_path, cassettes_path):
+    with vcr.use_cassette(
+            str(cassettes_path / 'pipeline_gcp_label_detection.yaml'),
+            mode='once',
+            filter_query_parameters=['key']
+    ):
+        model = GCPImageLabelDetectionRequestModel(key=os.environ.get('API_KEY_GCP', ''))
+        template = GCPImageLabelDetectionTemplate()
+        b64_image = load_image_as_b64(data_path / 'images/1500x500.jpeg')
+        post_processor = PostProcessor({})
+        labels = pipeline(
+            text=b64_image,
             request_model=model,
             mapping_template=template,
             post_processing=post_processor
