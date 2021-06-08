@@ -206,3 +206,36 @@ class AmazonComprehendPIIEntityRequestModel(AmazonComprehendRequestModel):
             LanguageCode=self.language_code
         )
         return response
+
+
+class GCPImageLabelDetectionRequestModel(RequestModel):
+    """
+    This allow you to detect labels for a image by
+    <a href="https://cloud.google.com/vision/docs/labels">Cloud Vision API</a>.
+    """
+    key: str
+
+    class Config:
+        title = 'GCP Image Label Detection'
+
+    def send(self, b64_image: str):
+        url = 'https://vision.googleapis.com/v1/images:annotate'
+        headers = {'Content-Type': 'application/json'}
+        params = {'key': self.key}
+        body = {
+            'requests': [
+                {
+                    'image': {
+                        'content': b64_image
+                    },
+                    'features': [
+                        {
+                            'maxResults': 5,
+                            'type': 'LABEL_DETECTION'
+                        }
+                    ]
+                }
+            ]
+        }
+        response = requests.post(url, headers=headers, params=params, json=body).json()
+        return response

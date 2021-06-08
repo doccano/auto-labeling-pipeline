@@ -24,6 +24,10 @@ class Seq2seq(Task):
     label_collection = Seq2seqLabels
 
 
+class ImageClassification(Task):
+    label_collection = ClassificationLabels
+
+
 class TaskFactory:
 
     @classmethod
@@ -31,5 +35,6 @@ class TaskFactory:
         return {
             'DocumentClassification': DocumentClassification,
             'SequenceLabeling': SequenceLabeling,
-            'Seq2seq': Seq2seq
+            'Seq2seq': Seq2seq,
+            'ImageClassification': ImageClassification
         }.get(task_name, GenericTask)

@@ -1,10 +1,17 @@
+import base64
 import os
 
 import pytest
 import vcr
 
-from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, GCPEntitiesRequestModel, RequestModel,
-                                           RequestModelFactory)
+from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, GCPEntitiesRequestModel,
+                                           GCPImageLabelDetectionRequestModel, RequestModel, RequestModelFactory)
+
+
+def load_image_as_b64(filepath):
+    with open(filepath, 'rb') as f:
+        b64_image = base64.b64encode(f.read())
+        return b64_image.decode('utf-8')
 
 
 def test_request_model_raises_type_error_on_instantiation():
@@ -34,6 +41,21 @@ def test_gcp_entities_request(cassettes_path):
         model = GCPEntitiesRequestModel(key=os.environ.get('API_KEY_GCP', ''), type='PLAIN_TEXT', language='en')
         response = model.send(text='Google, headquartered in Mountain View')
         assert 'entities' in response
+
+
+def test_gcp_image_label_detection(data_path, cassettes_path):
+    with vcr.use_cassette(
+            str(cassettes_path / 'gcp_label_detection.yaml'),
+            mode='once',
+            filter_query_parameters=['key']
+    ):
+        model = GCPImageLabelDetectionRequestModel(
+            key=os.environ.get('API_KEY_GCP', '')
+        )
+        image = load_image_as_b64(data_path / 'images/1500x500.jpeg')
+        response = model.send(b64_image=image)
+        assert 'responses' in response
+        assert 'labelAnnotations' in response['responses'][0]
 
 
 def test_amazon_comprehend_sentiment_request(cassettes_path):

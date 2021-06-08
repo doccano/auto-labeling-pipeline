@@ -44,6 +44,11 @@ class AmazonComprehendSentimentTemplate(MappingTemplate):
     template_file = 'amazon_comprehend_sentiment.jinja2'
 
 
+class GCPImageLabelDetectionTemplate(MappingTemplate):
+    label_collection = ClassificationLabels
+    template_file = 'gcp_image_label_detection.jinja2'
+
+
 class AmazonComprehendEntityTemplate(MappingTemplate):
     label_collection = SequenceLabels
     template_file = 'amazon_comprehend_entity.jinja2'

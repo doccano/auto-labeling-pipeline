@@ -2,20 +2,17 @@ from typing import List, Type
 
 from pydantic import BaseModel
 
-from auto_labeling_pipeline.mappings import (AmazonComprehendEntityTemplate, AmazonComprehendSentimentTemplate,
-                                             GCPEntitiesTemplate, MappingTemplate)
-from auto_labeling_pipeline.models import (AmazonComprehendEntityRequestModel, AmazonComprehendPIIEntityRequestModel,
-                                           AmazonComprehendSentimentRequestModel, CustomRESTRequestModel,
-                                           GCPEntitiesRequestModel, RequestModel)
-from auto_labeling_pipeline.task import DocumentClassification, GenericTask, SequenceLabeling, Task, TaskFactory
+from auto_labeling_pipeline import mappings as mp
+from auto_labeling_pipeline import models as mo
+from auto_labeling_pipeline import task as t
 
 
 class Option(BaseModel):
     name: str
     description: str
-    task: Type[Task]
-    model: Type[RequestModel]
-    template: Type[MappingTemplate]
+    task: Type[t.Task]
+    model: Type[mo.RequestModel]
+    template: Type[mp.MappingTemplate]
 
     class Config:
         arbitrary_types_allowed = True
@@ -34,8 +31,8 @@ class Options:
 
     @classmethod
     def filter_by_task(cls, task_name: str) -> List[Option]:
-        task = TaskFactory.create(task_name)
-        return [option for option in cls.options if option.task == task or option.task == GenericTask]
+        task = t.TaskFactory.create(task_name)
+        return [option for option in cls.options if option.task == task or option.task == t.GenericTask]
 
     @classmethod
     def find(cls, option_name: str) -> Option:
@@ -45,7 +42,7 @@ class Options:
         raise ValueError('Option {} is not found.'.format(option_name))
 
     @classmethod
-    def register(cls, task: Type[Task], model: Type[RequestModel], template: Type[MappingTemplate]):
+    def register(cls, task: Type[t.Task], model: Type[mo.RequestModel], template: Type[mp.MappingTemplate]):
         schema = model.schema()
         cls.options.append(
             Option(
@@ -58,8 +55,33 @@ class Options:
         )
 
 
-Options.register(GenericTask, CustomRESTRequestModel, MappingTemplate)
-Options.register(DocumentClassification, AmazonComprehendSentimentRequestModel, AmazonComprehendSentimentTemplate)
-Options.register(SequenceLabeling, GCPEntitiesRequestModel, GCPEntitiesTemplate)
-Options.register(SequenceLabeling, AmazonComprehendEntityRequestModel, AmazonComprehendEntityTemplate)
-Options.register(SequenceLabeling, AmazonComprehendPIIEntityRequestModel, AmazonComprehendEntityTemplate)
+Options.register(
+    t.GenericTask,
+    mo.CustomRESTRequestModel,
+    mp.MappingTemplate
+)
+Options.register(
+    t.DocumentClassification,
+    mo.AmazonComprehendSentimentRequestModel,
+    mp.AmazonComprehendSentimentTemplate
+)
+Options.register(
+    t.SequenceLabeling,
+    mo.GCPEntitiesRequestModel,
+    mp.GCPEntitiesTemplate
+)
+Options.register(
+    t.SequenceLabeling,
+    mo.AmazonComprehendEntityRequestModel,
+    mp.AmazonComprehendEntityTemplate
+)
+Options.register(
+    t.SequenceLabeling,
+    mo.AmazonComprehendPIIEntityRequestModel,
+    mp.AmazonComprehendEntityTemplate
+)
+Options.register(
+    t.ImageClassification,
+    mo.GCPImageLabelDetectionRequestModel,
+    mp.GCPImageLabelDetectionTemplate
+)
