@@ -1,7 +1,7 @@
 import json
 
 from auto_labeling_pipeline.mappings import (AmazonComprehendEntityTemplate, AmazonComprehendSentimentTemplate,
-                                             GCPEntitiesTemplate)
+                                             GCPEntitiesTemplate, GCPImageLabelDetectionTemplate)
 
 
 def load_json(filepath):
@@ -85,4 +85,13 @@ def test_amazon_comprehend_entities(data_path):
             'end_offset': 30
         }
     ]
+    assert labels == expected
+
+
+def test_gcp_image_label_detection(data_path):
+    response = load_json(data_path / 'gcp_image_label_detection.json')
+    template = GCPImageLabelDetectionTemplate()
+    labels = template.render(response)
+    labels = labels.dict()
+    expected = [{'label': 'Cat'}]
     assert labels == expected
