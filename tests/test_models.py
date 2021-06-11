@@ -14,6 +14,11 @@ def load_image_as_b64(filepath):
         return b64_image.decode('utf-8')
 
 
+def test_find_model():
+    model = RequestModelFactory.find('Amazon Comprehend Sentiment Analysis')
+    assert model == AmazonComprehendSentimentRequestModel
+
+
 def test_request_model_raises_type_error_on_instantiation():
     with pytest.raises(TypeError):
         RequestModel()
