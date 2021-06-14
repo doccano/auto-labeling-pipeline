@@ -1,4 +1,5 @@
 import abc
+import base64
 from typing import Dict, Optional, Type
 
 import boto3
@@ -228,7 +229,7 @@ class GCPImageLabelDetectionRequestModel(RequestModel):
     class Config:
         title = 'GCP Image Label Detection'
 
-    def send(self, b64_image: str):
+    def send(self, filepath: str):
         url = 'https://vision.googleapis.com/v1/images:annotate'
         headers = {'Content-Type': 'application/json'}
         params = {'key': self.key}
@@ -236,7 +237,7 @@ class GCPImageLabelDetectionRequestModel(RequestModel):
             'requests': [
                 {
                     'image': {
-                        'content': b64_image
+                        'content': load_image_as_b64(filepath)
                     },
                     'features': [
                         {
@@ -267,8 +268,15 @@ class AmazonRekognitionLabelDetectionRequestModel(AWSMixin, RequestModel):
             region_name=self.region_name
         )
 
-    def send(self, image: bytes):
-        response = self.client.detect_labels(
-            Image={'Bytes': image},
-        )
-        return response
+    def send(self, filepath: str):
+        with open(filepath, 'rb') as f:
+            response = self.client.detect_labels(
+                Image={'Bytes': f.read()},
+            )
+            return response
+
+
+def load_image_as_b64(filepath):
+    with open(filepath, 'rb') as f:
+        b64_image = base64.b64encode(f.read())
+        return b64_image.decode('utf-8')
