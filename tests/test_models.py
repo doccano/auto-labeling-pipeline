@@ -4,7 +4,8 @@ import os
 import pytest
 import vcr
 
-from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, GCPEntitiesRequestModel,
+from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel,
+                                           AmazonRekognitionLabelDetectionRequestModel, GCPEntitiesRequestModel,
                                            GCPImageLabelDetectionRequestModel, RequestModel, RequestModelFactory)
 
 
@@ -75,3 +76,19 @@ def test_amazon_comprehend_sentiment_request(cassettes_path):
         )
         response = model.send(text='I am very sad.')
         assert 'Sentiment' in response
+
+
+def test_amazon_rekognition_label_detection(data_path, cassettes_path):
+    with vcr.use_cassette(
+            str(cassettes_path / 'amazon_rekognition_label_detection.yaml'),
+            mode='once',
+            filter_headers=['authorization']
+    ):
+        model = AmazonRekognitionLabelDetectionRequestModel(
+            aws_access_key=os.environ.get('AWS_ACCESS_KEY', ''),
+            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY', ''),
+            region_name='us-east-1',
+        )
+        image = open(data_path / 'images/1500x500.jpeg', 'rb').read()
+        response = model.send(image)
+        assert 'Labels' in response
