@@ -57,3 +57,8 @@ class AmazonComprehendEntityTemplate(MappingTemplate):
 class GCPEntitiesTemplate(MappingTemplate):
     label_collection = SequenceLabels
     template_file = 'gcp_entities.jinja2'
+
+
+class AmazonRekognitionLabelDetectionTemplate(MappingTemplate):
+    label_collection = ClassificationLabels
+    template_file = 'amazon_rekognition_label_detection.jinja2'

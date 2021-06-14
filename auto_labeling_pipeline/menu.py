@@ -85,3 +85,8 @@ Options.register(
     mo.GCPImageLabelDetectionRequestModel,
     mp.GCPImageLabelDetectionTemplate
 )
+Options.register(
+    t.ImageClassification,
+    mo.AmazonRekognitionLabelDetectionRequestModel,
+    mp.AmazonRekognitionLabelDetectionTemplate
+)

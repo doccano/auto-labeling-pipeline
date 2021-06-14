@@ -1,17 +1,12 @@
-import base64
 import os
 
 import pytest
 import vcr
 
-from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, GCPEntitiesRequestModel,
-                                           GCPImageLabelDetectionRequestModel, RequestModel, RequestModelFactory)
-
-
-def load_image_as_b64(filepath):
-    with open(filepath, 'rb') as f:
-        b64_image = base64.b64encode(f.read())
-        return b64_image.decode('utf-8')
+from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel,
+                                           AmazonRekognitionLabelDetectionRequestModel, GCPEntitiesRequestModel,
+                                           GCPImageLabelDetectionRequestModel, RequestModel, RequestModelFactory,
+                                           load_image_as_b64)
 
 
 def test_find_model():
@@ -57,8 +52,8 @@ def test_gcp_image_label_detection(data_path, cassettes_path):
         model = GCPImageLabelDetectionRequestModel(
             key=os.environ.get('API_KEY_GCP', '')
         )
-        image = load_image_as_b64(data_path / 'images/1500x500.jpeg')
-        response = model.send(b64_image=image)
+        filepath = data_path / 'images/1500x500.jpeg'
+        response = model.send(filepath)
         assert 'responses' in response
         assert 'labelAnnotations' in response['responses'][0]
 
@@ -75,3 +70,19 @@ def test_amazon_comprehend_sentiment_request(cassettes_path):
         )
         response = model.send(text='I am very sad.')
         assert 'Sentiment' in response
+
+
+def test_amazon_rekognition_label_detection(data_path, cassettes_path):
+    with vcr.use_cassette(
+            str(cassettes_path / 'amazon_rekognition_label_detection.yaml'),
+            mode='once',
+            filter_headers=['authorization']
+    ):
+        model = AmazonRekognitionLabelDetectionRequestModel(
+            aws_access_key=os.environ.get('AWS_ACCESS_KEY', ''),
+            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY', ''),
+            region_name='us-east-1',
+        )
+        filepath = data_path / 'images/1500x500.jpeg'
+        response = model.send(filepath)
+        assert 'Labels' in response

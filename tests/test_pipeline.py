@@ -3,11 +3,10 @@ import os
 import vcr
 
 from auto_labeling_pipeline.mappings import AmazonComprehendSentimentTemplate, GCPImageLabelDetectionTemplate
-from auto_labeling_pipeline.models import AmazonComprehendSentimentRequestModel, GCPImageLabelDetectionRequestModel
+from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel, GCPImageLabelDetectionRequestModel,
+                                           load_image_as_b64)
 from auto_labeling_pipeline.pipeline import pipeline
 from auto_labeling_pipeline.postprocessing import PostProcessor
-
-from .test_models import load_image_as_b64
 
 
 def test_amazon_pipeline(cassettes_path):
@@ -42,10 +41,10 @@ def test_gcp_label_detection_pipeline(data_path, cassettes_path):
     ):
         model = GCPImageLabelDetectionRequestModel(key=os.environ.get('API_KEY_GCP', ''))
         template = GCPImageLabelDetectionTemplate()
-        b64_image = load_image_as_b64(data_path / 'images/1500x500.jpeg')
+        filepath = data_path / 'images/1500x500.jpeg'
         post_processor = PostProcessor({})
         labels = pipeline(
-            text=b64_image,
+            text=filepath,
             request_model=model,
             mapping_template=template,
             post_processing=post_processor

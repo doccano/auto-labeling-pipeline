@@ -1,4 +1,5 @@
 import abc
+import base64
 from typing import Dict, Optional, Type
 
 import boto3
@@ -107,7 +108,7 @@ class GCPEntitiesRequestModel(RequestModel):
         return response
 
 
-class AmazonComprehendRequestModel(RequestModel):
+class AWSMixin(BaseModel):
     aws_access_key: str
     aws_secret_access_key: str
     region_name: Literal[
@@ -125,6 +126,9 @@ class AmazonComprehendRequestModel(RequestModel):
         'eu-west-1',
         'eu-west-2',
     ]
+
+
+class AmazonComprehendRequestModel(AWSMixin, RequestModel):
     language_code: Literal['en', 'es', 'fr', 'de', 'it', 'pt', 'ar', 'hi', 'ja', 'ko', 'zh', 'zh-TW']
 
     @property
@@ -225,7 +229,7 @@ class GCPImageLabelDetectionRequestModel(RequestModel):
     class Config:
         title = 'GCP Image Label Detection'
 
-    def send(self, b64_image: str):
+    def send(self, filepath: str):
         url = 'https://vision.googleapis.com/v1/images:annotate'
         headers = {'Content-Type': 'application/json'}
         params = {'key': self.key}
@@ -233,7 +237,7 @@ class GCPImageLabelDetectionRequestModel(RequestModel):
             'requests': [
                 {
                     'image': {
-                        'content': b64_image
+                        'content': load_image_as_b64(filepath)
                     },
                     'features': [
                         {
@@ -246,3 +250,33 @@ class GCPImageLabelDetectionRequestModel(RequestModel):
         }
         response = requests.post(url, headers=headers, params=params, json=body).json()
         return response
+
+
+class AmazonRekognitionLabelDetectionRequestModel(AWSMixin, RequestModel):
+    """
+    This allow you to detect labels for a image by Amazon Rekognition.
+    """
+    class Config:
+        title = 'Amazon Rekognition Label Detection'
+
+    @property
+    def client(self):
+        return boto3.client(
+            'rekognition',
+            aws_access_key_id=self.aws_access_key,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=self.region_name
+        )
+
+    def send(self, filepath: str):
+        with open(filepath, 'rb') as f:
+            response = self.client.detect_labels(
+                Image={'Bytes': f.read()},
+            )
+            return response
+
+
+def load_image_as_b64(filepath):
+    with open(filepath, 'rb') as f:
+        b64_image = base64.b64encode(f.read())
+        return b64_image.decode('utf-8')
