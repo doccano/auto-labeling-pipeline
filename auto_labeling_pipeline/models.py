@@ -246,3 +246,41 @@ class GCPImageLabelDetectionRequestModel(RequestModel):
         }
         response = requests.post(url, headers=headers, params=params, json=body).json()
         return response
+
+
+class AmazonRekognitionRequestModel(RequestModel):
+    """
+    This allow you to detect labels for a image by Amazon Rekognition.
+    """
+    aws_access_key: str
+    aws_secret_access_key: str
+    region_name: Literal[
+        'us-east-1',
+        'us-east-2',
+        'us-west-2',
+        'us-gov-west-1',
+        'ap-south-1',
+        'ap-southeast-1',
+        'ap-southeast-2',
+        'ap-northeast-1',
+        'ap-northeast-2',
+        'ca-central-1',
+        'eu-central-1',
+        'eu-west-1',
+        'eu-west-2',
+    ]
+
+    @property
+    def client(self):
+        return boto3.client(
+            'rekognition',
+            aws_access_key_id=self.aws_access_key,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=self.region_name
+        )
+
+    def send(self, image: bytes):
+        response = self.client.detect_labels(
+            Image={'Bytes': image},
+        )
+        return response
