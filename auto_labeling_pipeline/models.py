@@ -251,7 +251,7 @@ class GCPImageLabelDetectionRequestModel(RequestModel):
         return response
 
 
-class AmazonRekognitionRequestModel(AWSMixin, RequestModel):
+class AmazonRekognitionLabelDetectionRequestModel(AWSMixin, RequestModel):
     """
     This allow you to detect labels for a image by Amazon Rekognition.
     """
