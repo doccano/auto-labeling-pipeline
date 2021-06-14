@@ -255,6 +255,8 @@ class AmazonRekognitionLabelDetectionRequestModel(AWSMixin, RequestModel):
     """
     This allow you to detect labels for a image by Amazon Rekognition.
     """
+    class Config:
+        title = 'Amazon Rekognition Label Detection'
 
     @property
     def client(self):
