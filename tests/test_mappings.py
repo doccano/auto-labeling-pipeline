@@ -2,7 +2,7 @@ import json
 
 from auto_labeling_pipeline.mappings import (AmazonComprehendEntityTemplate, AmazonComprehendSentimentTemplate,
                                              AmazonRekognitionLabelDetectionTemplate, GCPEntitiesTemplate,
-                                             GCPImageLabelDetectionTemplate)
+                                             GCPImageLabelDetectionTemplate, GCPSpeechToTextTemplate)
 
 
 def load_json(filepath):
@@ -104,4 +104,13 @@ def test_aws_image_label_detection(data_path):
     labels = template.render(response)
     labels = labels.dict()
     expected = [{'label': 'Cat'}]
+    assert labels == expected
+
+
+def test_gcp_speech_to_text(data_path):
+    response = load_json(data_path / 'gcp_speech_to_text.json')
+    template = GCPSpeechToTextTemplate()
+    labels = template.render(response)
+    labels = labels.dict()
+    expected = [{'text': 'hi welcome to Dacono'}]
     assert labels == expected
