@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Type
 
 from jinja2 import Template
 
-from auto_labeling_pipeline.labels import ClassificationLabels, Labels, SequenceLabels
+from auto_labeling_pipeline.labels import ClassificationLabels, Labels, Seq2seqLabels, SequenceLabels
 
 TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates'
 
@@ -62,3 +62,8 @@ class GCPEntitiesTemplate(MappingTemplate):
 class AmazonRekognitionLabelDetectionTemplate(MappingTemplate):
     label_collection = ClassificationLabels
     template_file = 'amazon_rekognition_label_detection.jinja2'
+
+
+class GCPSpeechToTextTemplate(MappingTemplate):
+    label_collection = Seq2seqLabels
+    template_file = 'gcp_speech_to_text.jinja2'

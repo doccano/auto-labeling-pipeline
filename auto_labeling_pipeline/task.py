@@ -28,6 +28,10 @@ class ImageClassification(Task):
     label_collection = ClassificationLabels
 
 
+class SpeechToText(Task):
+    label_collection = Seq2seqLabels
+
+
 class TaskFactory:
 
     @classmethod
@@ -36,5 +40,6 @@ class TaskFactory:
             'DocumentClassification': DocumentClassification,
             'SequenceLabeling': SequenceLabeling,
             'Seq2seq': Seq2seq,
-            'ImageClassification': ImageClassification
+            'ImageClassification': ImageClassification,
+            'Speech2text': SpeechToText
         }.get(task_name, GenericTask)

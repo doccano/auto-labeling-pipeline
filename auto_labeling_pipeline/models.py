@@ -280,3 +280,46 @@ def load_image_as_b64(filepath):
     with open(filepath, 'rb') as f:
         b64_image = base64.b64encode(f.read())
         return b64_image.decode('utf-8')
+
+
+class GCPSpeechToTextRequestModel(RequestModel):
+    """
+    This allow you to speech-to-text by
+    <a href="https://cloud.google.com/speech-to-text/docs/languages">Cloud Speech to Text API</a>.
+    """
+    key: str
+    language_code: Literal[
+        'af-ZA', 'am-ET', 'ar-AE', 'ar-BH', 'ar-DZ', 'ar-EG', 'ar-IL', 'ar-IQ', 'ar-JO', 'ar-KW', 'ar-LB', 'ar-MA',
+        'ar-OM', 'ar-PS', 'ar-QA', 'ar-SA', 'ar-TN', 'ar-YE', 'az-AZ', 'bg-BG', 'bn-BD', 'bn-IN', 'bs-BA', 'ca-ES',
+        'cs-CZ', 'da-DK', 'de-AT', 'de-CH', 'de-DE', 'el-GR', 'en-AU', 'en-CA', 'en-GB', 'en-GH', 'en-HK', 'en-IE',
+        'en-IN', 'en-KE', 'en-NG', 'en-NZ', 'en-PH', 'en-PK', 'en-SG', 'en-TZ', 'en-US', 'en-ZA', 'es-AR', 'es-BO',
+        'es-CL', 'es-CO', 'es-CR', 'es-DO', 'es-EC', 'es-ES', 'es-GT', 'es-HN', 'es-MX', 'es-NI', 'es-PA', 'es-PE',
+        'es-PR', 'es-PY', 'es-SV', 'es-US', 'es-UY', 'es-VE', 'et-EE', 'eu-ES', 'fa-IR', 'fi-FI', 'fil-PH', 'fr-BE',
+        'fr-CA', 'fr-CH', 'fr-FR', 'gl-ES', 'gu-IN', 'hi-IN', 'hr-HR', 'hu-HU', 'hy-AM', 'id-ID', 'is-IS', 'it-CH',
+        'it-IT', 'iw-IL', 'ja-JP', 'jv-ID', 'ka-GE', 'kk-KZ', 'km-KH', 'kn-IN', 'ko-KR', 'lo-LA', 'lt-LT', 'lv-LV',
+        'mk-MK', 'ml-IN', 'mn-MN', 'mr-IN', 'ms-MY', 'my-MM', 'ne-NP', 'nl-BE', 'nl-NL', 'no-NO', 'pa-Guru-IN',
+        'pl-PL', 'pt-BR', 'pt-PT', 'ro-RO', 'ru-RU', 'si-LK', 'sk-SK', 'sl-SI', 'sq-AL', 'sr-RS', 'su-ID', 'sv-SE',
+        'sw-KE', 'sw-TZ', 'ta-IN', 'ta-LK', 'ta-MY', 'ta-SG', 'te-IN', 'th-TH', 'tr-TR', 'uk-UA', 'ur-IN', 'ur-PK',
+        'uz-UZ', 'vi-VN', 'yue-Hant-HK', 'zh (cmn-Hans-CN)', 'zh-TW (cmn-Hant-TW)', 'zu-ZA'
+    ]
+    encoding: Literal['ENCODING_UNSPECIFIED', 'LINEAR16', 'FLAC', 'MP3']
+
+    class Config:
+        title = 'GCP Speech to Text'
+
+    def send(self, filepath: str):
+        url = 'https://speech.googleapis.com/v1p1beta1/speech:recognize'
+        headers = {'Content-Type': 'application/json'}
+        params = {'key': self.key}
+        body = {
+            'config': {
+                'encoding': self.encoding,
+                'sampleRateHertz': 16000,
+                'languageCode': self.language_code
+            },
+            'audio': {
+                'content': load_image_as_b64(filepath)
+            }
+        }
+        response = requests.post(url, headers=headers, params=params, json=body).json()
+        return response

@@ -25,7 +25,8 @@ def test_filter_task(task, expected):
         'Amazon Comprehend Entity Recognition',
         'GCP Entity Analysis',
         'GCP Image Label Detection',
-        'Amazon Rekognition Label Detection'
+        'Amazon Rekognition Label Detection',
+        'GCP Speech to Text'
     ]
 )
 def test_find_option(option_name):
