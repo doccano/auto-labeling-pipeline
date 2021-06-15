@@ -5,8 +5,8 @@ import vcr
 
 from auto_labeling_pipeline.models import (AmazonComprehendSentimentRequestModel,
                                            AmazonRekognitionLabelDetectionRequestModel, GCPEntitiesRequestModel,
-                                           GCPImageLabelDetectionRequestModel, RequestModel, RequestModelFactory,
-                                           load_image_as_b64)
+                                           GCPImageLabelDetectionRequestModel, GCPSpeechToTextRequestModel,
+                                           RequestModel, RequestModelFactory)
 
 
 def test_find_model():
@@ -86,3 +86,20 @@ def test_amazon_rekognition_label_detection(data_path, cassettes_path):
         filepath = data_path / 'images/1500x500.jpeg'
         response = model.send(filepath)
         assert 'Labels' in response
+
+
+def test_gcp_speech_to_text(data_path, cassettes_path):
+    with vcr.use_cassette(
+            str(cassettes_path / 'gcp_speech_to_text.yaml'),
+            mode='once',
+            filter_query_parameters=['key']
+    ):
+        model = GCPSpeechToTextRequestModel(
+            key=os.environ.get('API_KEY_GCP', ''),
+            language_code='en-US',
+            encoding='MP3'
+        )
+        filepath = data_path / 'audios/sample.mp3'
+        response = model.send(filepath)
+        assert 'results' in response
+        assert 'alternatives' in response['results'][0]
