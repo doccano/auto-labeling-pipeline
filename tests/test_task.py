@@ -1,7 +1,8 @@
 import pytest
 
 from auto_labeling_pipeline.labels import ClassificationLabels, Seq2seqLabels, SequenceLabels
-from auto_labeling_pipeline.task import DocumentClassification, ImageClassification, Seq2seq, SequenceLabeling
+from auto_labeling_pipeline.task import (DocumentClassification, ImageClassification, Seq2seq, SequenceLabeling,
+                                         SpeechToText)
 
 
 @pytest.mark.parametrize(
@@ -10,7 +11,8 @@ from auto_labeling_pipeline.task import DocumentClassification, ImageClassificat
         (DocumentClassification, ClassificationLabels),
         (SequenceLabeling, SequenceLabels),
         (Seq2seq, Seq2seqLabels),
-        (ImageClassification, ClassificationLabels)
+        (ImageClassification, ClassificationLabels),
+        (SpeechToText, Seq2seqLabels)
     ]
 )
 def test_return_correct_label_collection(task, expected):

@@ -90,3 +90,8 @@ Options.register(
     mo.AmazonRekognitionLabelDetectionRequestModel,
     mp.AmazonRekognitionLabelDetectionTemplate
 )
+Options.register(
+    t.Seq2seq,
+    mo.GCPSpeechToTextRequestModel,
+    mp.GCPSpeechToTextTemplate
+)
