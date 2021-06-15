@@ -91,7 +91,7 @@ Options.register(
     mp.AmazonRekognitionLabelDetectionTemplate
 )
 Options.register(
-    t.Seq2seq,
+    t.SpeechToText,
     mo.GCPSpeechToTextRequestModel,
     mp.GCPSpeechToTextTemplate
 )
