@@ -72,6 +72,11 @@ Options.register(
 )
 Options.register(
     t.SequenceLabeling,
+    mo.GCPCustomEntitiesRequestModel,
+    mp.GCPCustomEntitiesTemplate
+)
+Options.register(
+    t.SequenceLabeling,
     mo.AmazonComprehendEntityRequestModel,
     mp.AmazonComprehendEntityTemplate
 )
