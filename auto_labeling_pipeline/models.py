@@ -1,11 +1,10 @@
 import abc
 import base64
-from typing import Dict, Optional, Type
+from typing import Dict, Literal, Optional, Type
 
 import boto3
 import requests
 from pydantic import AnyHttpUrl, BaseModel
-from typing_extensions import Literal
 
 
 class RequestModel(BaseModel, abc.ABC):
@@ -33,6 +32,8 @@ class RequestModelFactory:
             return all_subclasses
 
         for subclass in get_all_subclasses(RequestModel):
+            if not hasattr(subclass, "Config"):
+                continue
             if subclass.Config.title == model_name:
                 return subclass
         raise NameError(f'{model_name} is not found.')
@@ -64,7 +65,7 @@ class CustomRESTRequestModel(RequestModel):
         find_and_replace_value(self.body, text)
         find_and_replace_value(self.params, text)
         response = requests.request(
-            url=self.url,
+            url=str(self.url),
             method=self.method,
             params=self.params,
             headers=self.headers,
@@ -84,7 +85,7 @@ class GCPEntitiesRequestModel(RequestModel):
 
     class Config:
         title = 'GCP Entity Analysis'
-        schema_extra = {
+        json_schema_extra = {
             # https://cloud.google.com/natural-language/docs/reference/rest/v1/Entity#Type
             'types': [
                 'UNKNOWN', 'PERSON', 'LOCATION', 'ORGANIZATION', 'EVENT', 'WORK_OF_ART',
@@ -152,7 +153,7 @@ class AmazonComprehendSentimentRequestModel(AmazonComprehendRequestModel):
 
     class Config:
         title = 'Amazon Comprehend Sentiment Analysis'
-        schema_extra = {
+        json_schema_extra = {
             # https://docs.aws.amazon.com/comprehend/latest/dg/how-sentiment.html
             'types': [
                 'POSITIVE', 'NEGATIVE', 'NEUTRAL', 'MIXED'
@@ -175,7 +176,7 @@ class AmazonComprehendEntityRequestModel(AmazonComprehendRequestModel):
 
     class Config:
         title = 'Amazon Comprehend Entity Recognition'
-        schema_extra = {
+        json_schema_extra = {
             # https://docs.aws.amazon.com/comprehend/latest/dg/how-entities.html
             'types': [
                 'PERSON', 'LOCATION', 'ORGANIZATION', 'COMMERCIAL_ITEM',
@@ -200,7 +201,7 @@ class AmazonComprehendPIIEntityRequestModel(AmazonComprehendRequestModel):
 
     class Config:
         title = 'Amazon Comprehend PII Entity Recognition'
-        schema_extra = {
+        json_schema_extra = {
             # https://docs.aws.amazon.com/comprehend/latest/dg/how-pii.html
             'types': [
                 'BANK_ACCOUNT_NUMBER', 'BANK_ROUTING', 'CREDIT_DEBIT_NUMBER',

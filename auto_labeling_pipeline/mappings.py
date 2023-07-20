@@ -16,9 +16,10 @@ class MappingTemplate:
     def __init__(self, label_collection: Type[Labels] = Labels, template: Optional[str] = ''):
         if self.template_file:
             template = self.load()
+        if template:
+            self.template = template
         if label_collection is not Labels:
             self.label_collection = label_collection
-        self.template = template
 
     def render(self, response: Dict) -> Labels:
         template = Template(self.template)
