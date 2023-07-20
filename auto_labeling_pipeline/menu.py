@@ -43,11 +43,11 @@ class Options:
 
     @classmethod
     def register(cls, task: Type[t.Task], model: Type[mo.RequestModel], template: Type[mp.MappingTemplate]):
-        schema = model.schema()
+        schema = model.model_json_schema()
         cls.options.append(
             Option(
-                name=schema.get('title'),
-                description=schema.get('description'),
+                name=schema.get('title'),  # type: ignore
+                description=schema.get('description'),  # type: ignore
                 task=task,
                 model=model,
                 template=template
