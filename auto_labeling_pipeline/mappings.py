@@ -1,6 +1,6 @@
 import json
 import pathlib
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Type
 
 from jinja2 import Template
 
@@ -13,11 +13,10 @@ class MappingTemplate:
     label_collection: Type[Labels]
     template_file: str = ''
 
-    def __init__(self, label_collection: Type[Labels] = Labels, template: Optional[str] = ''):
+    def __init__(self, label_collection: Type[Labels] = Labels, template: str = ''):
         if self.template_file:
             template = self.load()
-        if template:
-            self.template = template
+        self.template = template
         if label_collection is not Labels:
             self.label_collection = label_collection
 
