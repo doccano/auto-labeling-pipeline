@@ -40,12 +40,16 @@ class RequestModelFactory:
 
 
 def find_and_replace_value(obj, value, target='{{ text }}'):
-    for k, v in obj.items():
-        if v == target:
-            obj[k] = value
-            return
-        if isinstance(v, dict):
-            find_and_replace_value(v, value, target)
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if v == target:
+                obj[k] = value
+                return
+            if isinstance(v, (dict, list)):
+                find_and_replace_value(v, value, target)
+    if isinstance(obj, list):
+        for item in obj:
+            find_and_replace_value(item, value, target)
 
 
 class CustomRESTRequestModel(RequestModel):
