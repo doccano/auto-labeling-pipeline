@@ -1,0 +1,14 @@
+[
+  {% for entity in input.payload %}
+    {% set outer_loop = loop %}
+    {%- set start_offset = entity.textExtraction.textSegment.startOffset -%}
+    {%- set end_offset = entity.textExtraction.textSegment.endOffset -%}
+      {% if (start_offset) and (end_offset) %}
+        {
+          "label": "{{ entity.displayName }}",
+          "start_offset": {{ start_offset }},
+          "end_offset": {{ end_offset }}
+        }{% if not outer_loop.last %},{% endif %}
+      {% endif %}
+  {% endfor %}
+]

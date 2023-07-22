@@ -108,6 +108,32 @@ class GCPEntitiesRequestModel(RequestModel):
         response = requests.post(url, headers=headers, params=params, json=body).json()
         return response
 
+class GCPCustomEntitiesRequestModel(RequestModel):
+    """
+    This allow you to analyze entities in a text using an AutoML custom entity extractor
+    <a href="https://cloud.google.com/natural-language/automl/docs"> AutoML Natural Language API</a>.
+    """
+    url: str
+    authorization: str
+
+    class Config:
+        title = 'GCP Custom Entity Analysis'
+
+    def send(self, text: str):
+        url = self.url
+        headers = {'Content-Type': 'application/json',
+                   'Authorization': self.authorization}
+        params = {}
+        body = {
+            "payload": {
+                "textSnippet": {
+                    "content": text,
+                    "mime_type": "text/plain"
+                }
+            }
+        }
+        response = requests.post(url, headers=headers, params=params, json=body).json()
+        return response
 
 class AWSMixin(BaseModel):
     aws_access_key: str
